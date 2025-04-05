@@ -33,6 +33,11 @@ app.get("/status", (req, res) => {
     res.send({message: "The server is up", status: "Live"});
 })
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    res.send({ status: "Error", message: err.message });
+});
+
 app.listen(port, () => {
     console.log("Server is up on port " + port);
 })
