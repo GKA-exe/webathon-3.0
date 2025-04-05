@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 const SNavbar = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -63,7 +64,7 @@ const SNavbar = () => {
             <NavItem label="Dashboard" href="/student/dashboard" />
             <NavItem label="Mess" href="/student/mess" />
             <NavItem label="Lost&Found" href="/student/lost-and-found" />
-            <NavItem label="Raise Complaint" href="/student/raise-complaint" />
+            <NavItem label="Raise Complaint" href="/student/complaint" />
             <NavItem label="Fee Payment" href="/student/fee-payment" />
             
             {/* Profile dropdown for desktop */}
@@ -140,7 +141,7 @@ const SNavbar = () => {
             <MobileNavItem label="Dashboard" href="/student/dashboard" />
             <MobileNavItem label="Mess" href="/student/mess" />
             <MobileNavItem label="Lost&Found" href="/student/lost-and-found" />
-            <MobileNavItem label="Raise Complaint" href="/student/raise-complaint" />
+            <MobileNavItem label="Raise Complaint" href="/student/complaint" />
             <MobileNavItem label="Fee Payment" href="/student/fee-payment" />
             
             {/* Mobile Profile Section */}
