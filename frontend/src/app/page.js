@@ -29,7 +29,7 @@ export default function LandingPage() {
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="font-bold text-xl text-[#647c90]">
-                SmartHostel
+                NARKAM
               </Link>
             </div>
 
@@ -89,7 +89,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 text-center md:text-left mb-10 md:mb-0 animated fadeIn">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#e2ded0] mb-4">
-                Smart Hostel Management System
+                NARKAM Hostel
               </h1>
               <p className="text-[#e2ded0] text-opacity-90 text-lg md:text-xl mb-8 max-w-lg">
                 Streamline your hostel operations with our all-in-one smart
@@ -182,7 +182,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <p className="text-[#e2ded0] text-opacity-90">
-                © 2025 SmartHostel. All rights reserved.
+                © 2025 NARKAM. All rights reserved.
               </p>
             </div>
             <div className="flex space-x-6">
