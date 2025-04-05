@@ -6,7 +6,7 @@
   --primary: #647c90;
   --secondary: #a0bcd1;
   --teritary: #746c70;
-  --textcolor:#e2ded0;
+  --textcolor:#eceae4;
 }
 
 @theme inline {
@@ -22,6 +22,8 @@
   --color-foreground: #4e4f50;
   --color-secondary: #a0bcd1;
   --color-teritary: #746c70;
+  --color-nav:#e2ded0;
+  --color-textc:#eceae4;
 }
 
 
