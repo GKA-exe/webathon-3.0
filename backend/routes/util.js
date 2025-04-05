@@ -46,6 +46,7 @@ const createStudentorAdmin = async (req, res) => {
 
   if (user.userType === "student") {
     // QR Code generation
+    user.feeDue = 50;
     const timestamp = Date.now().toString();
     const fileName = `${timestamp}.png`;
     const qrCodePath = path.join(__dirname, `../public/qr/${fileName}`);
