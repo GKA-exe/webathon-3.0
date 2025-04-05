@@ -118,7 +118,7 @@ const SNavbar = () => {
                     About
                   </a>
                   <a 
-                    href="/student/apply-leave" 
+                    href="/student/leave" 
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Apply Leave
@@ -174,7 +174,7 @@ const SNavbar = () => {
                   <MobileNavItem label="My QR" href="/student/my-qr" />
                   <MobileNavItem label="Notifications" href="/student/notifications" />
                   <MobileNavItem label="About" href="/student/about" />
-                  <MobileNavItem label="Apply Leave" href="/student/apply-leave" />
+                  <MobileNavItem label="Apply Leave" href="/student/leave" />
                   <MobileNavItem label="Logout" href="/student/logout" />
                 </div>
               )}
