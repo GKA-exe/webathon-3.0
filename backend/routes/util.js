@@ -24,8 +24,7 @@ const createStudentorAdmin = async (req, res) => {
     }
   }
 
-  const hashedPassword = await bcryptjs.hash(user.password, 7);
-  user.password = hashedPassword;
+  user.password = await bcryptjs.hash(user.password, 7);
 
   if (user.userType === "student") {
     await studentsCollection.insertOne(user);
