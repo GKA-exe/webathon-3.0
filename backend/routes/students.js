@@ -5,10 +5,9 @@ const { studentOrAdminLogin, createStudentorAdmin } = require("./util");
 const expressAsyncHandler = require("express-async-handler");
 
 // student Creation
-studentApp.get("/create",
-  expressAsyncHandler(async (req, res) => {
-    res.send({ message: "This is the GET endpoint"});
-  }))
+studentApp.get("/create", (req, res) => {
+  res.send({ message: "This is the GET endpoint" });
+});
 
 studentApp.post("/create", expressAsyncHandler(createStudentorAdmin));
 
@@ -16,16 +15,20 @@ studentApp.post("/create", expressAsyncHandler(createStudentorAdmin));
 studentApp.post("/login", expressAsyncHandler(studentOrAdminLogin));
 
 // Delete Student
-studentApp.post("/delete", expressAsyncHandler(async (req, res) => {
-  const studentsCollection = req.app.get("studentsCollection");
-  const email = req.body.email;
-  const result = await studentsCollection.deleteOne({ email: email });
-  if (result.deletedCount === 1) {
-    res.send({ message: "Student deleted successfully" });
-  } else {
-    res.send({ message: "Student not found" });
-  }
-}));
+studentApp.post(
+  "/delete",
+  expressAsyncHandler(async (req, res) => {
+    const studentsCollection = req.app.get("studentsCollection");
+    const email = req.body.email;
+    const result = await studentsCollection.deleteOne({ email: email });
+    if (result.deletedCount === 1) {
+      res.send({ message: "Student deleted successfully" });
+    } else {
+      res.send({ message: "Student not found" });
+    }
+  }),
+);
+
 
 // Attendance -> Mark Entry
 studentApp.post("/attendance/mark", expressAsyncHandler(async (req, res) => {
