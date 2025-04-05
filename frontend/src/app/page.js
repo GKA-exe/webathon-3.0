@@ -1,103 +1,311 @@
-import Image from "next/image";
+// app/page.js
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import {
+  Menu,
+  X,
+  Wifi,
+  Utensils,
+  Wrench,
+  HomeIcon,
+  Shield,
+  Paintbrush,
+} from "lucide-react";
+import Link from "next/link";
+
+export default function LandingPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-[#e2ded0]">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 bg-[#e2ded0] shadow-md z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex-shrink-0 flex items-center">
+              <Link href="/" className="font-bold text-xl text-[#647c90]">
+                SmartHostel
+              </Link>
+            </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Link
+                href="/register"
+                className="text-[#647c90] hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium"
+              >
+                Register
+              </Link>
+              <Link
+                href="/login"
+                className="bg-[#647c90] text-[#e2ded0] px-4 py-2 rounded-md font-medium hover:bg-[#a0bcd1]"
+              >
+                Sign In
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden items-center">
+              <button
+                type="button"
+                className="text-[#647c90] hover:text-[#a0bcd1]"
+                onClick={toggleMenu}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-[#e2ded0] shadow-lg animated fadeIn">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <Link
+                href="/register"
+                className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4]"
+              >
+                Register
+              </Link>
+              <Link
+                href="/login"
+                className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4]"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-24 pb-16 bg-[#647c90]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2 text-center md:text-left mb-10 md:mb-0 animated fadeIn">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#e2ded0] mb-4">
+                Smart Hostel Management System
+              </h1>
+              <p className="text-[#e2ded0] text-opacity-90 text-lg md:text-xl mb-8 max-w-lg">
+                Streamline your hostel operations with our all-in-one smart
+                management solution. Manage rooms, bookings, and facilities with
+                ease.
+              </p>
+              <Link
+                href="/register"
+                className="inline-block bg-[#e2ded0] text-[#647c90] font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-[#d5d2c4] transform transition hover:scale-105"
+              >
+                Register Now
+              </Link>
+            </div>
+            <div className="md:w-1/2 animated slideIn">
+              <HeroSVG />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Facilities Section */}
+      <section className="py-16 bg-[#e2ded0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-[#647c90] mb-12">
+            Hostel Facilities
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FacilityCard
+              icon={<Wifi className="text-[#a0bcd1]" size={32} />}
+              title="Wi-Fi"
+              description="High-speed internet access throughout the hostel premises."
+            />
+
+            <FacilityCard
+              icon={<Utensils className="text-[#a0bcd1]" size={32} />}
+              title="Mess"
+              description="Nutritious meals with flexible dining options and meal plans."
+            />
+
+            <FacilityCard
+              icon={<Wrench className="text-[#a0bcd1]" size={32} />}
+              title="Maintenance"
+              description="Prompt maintenance services for all hostel facilities."
+            />
+
+            <FacilityCard
+              icon={<HomeIcon className="text-[#a0bcd1]" size={32} />}
+              title="Rooms"
+              description="Clean, comfortable rooms with modern amenities."
+            />
+
+            <FacilityCard
+              icon={<Shield className="text-[#a0bcd1]" size={32} />}
+              title="Security"
+              description="24/7 security with CCTV surveillance and access control."
+            />
+
+            <FacilityCard
+              icon={<Paintbrush className="text-[#a0bcd1]" size={32} />}
+              title="Housekeeping"
+              description="Regular cleaning and housekeeping services."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-[#647c90] text-[#e2ded0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6">
+            Join the Smart Hostel Experience Today
+          </h2>
+          <p className="text-[#e2ded0] text-opacity-90 mb-8 max-w-2xl mx-auto">
+            Transform your hostel management with our smart solution. Simplify
+            operations, enhance resident experience, and boost efficiency.
+          </p>
+          <Link
+            href="/register"
+            className="inline-block bg-[#e2ded0] text-[#647c90] font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-[#d5d2c4] transform transition hover:scale-105"
+          >
+            Register Now
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#647c90] text-[#e2ded0] py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <p className="text-[#e2ded0] text-opacity-90">
+                © 2025 SmartHostel. All rights reserved.
+              </p>
+            </div>
+            <div className="flex space-x-6">
+              <Link
+                href="/about"
+                className="text-[#e2ded0] text-opacity-90 hover:text-[#e2ded0]"
+              >
+                About
+              </Link>
+              <Link
+                href="/contact"
+                className="text-[#e2ded0] text-opacity-90 hover:text-[#e2ded0]"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-[#e2ded0] text-opacity-90 hover:text-[#e2ded0]"
+              >
+                Privacy
+              </Link>
+            </div>
+          </div>
+        </div>
       </footer>
+
+      {/* Custom CSS for Animations */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateX(50px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        .animated {
+          animation-duration: 1s;
+          animation-fill-mode: both;
+        }
+
+        .fadeIn {
+          animation-name: fadeIn;
+        }
+
+        .slideIn {
+          animation-name: slideIn;
+        }
+      `}</style>
     </div>
+  );
+}
+
+// Facility Card Component
+function FacilityCard({ icon, title, description }) {
+  return (
+    <div className="bg-[#e2ded0] p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-[#746c70] hover:border-[#a0bcd1] transform hover:-translate-y-1 transition-transform">
+      <div className="flex items-center justify-center mb-4">{icon}</div>
+      <h3 className="text-xl font-semibold text-[#647c90] text-center mb-2">
+        {title}
+      </h3>
+      <p className="text-[#4e4f50] text-center">{description}</p>
+    </div>
+  );
+}
+
+// Hero SVG Illustration
+function HeroSVG() {
+  return (
+    <svg
+      viewBox="0 0 500 400"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-full max-w-lg mx-auto"
+    >
+      <rect
+        x="100"
+        y="50"
+        width="300"
+        height="250"
+        rx="10"
+        fill="#e2ded0"
+        stroke="#647c90"
+        strokeWidth="3"
+      />
+      <rect x="120" y="80" width="260" height="40" rx="5" fill="#d5d2c4" />
+      <rect x="120" y="130" width="120" height="150" rx="5" fill="#d5d2c4" />
+      <rect x="260" y="130" width="120" height="70" rx="5" fill="#d5d2c4" />
+      <rect x="260" y="210" width="120" height="70" rx="5" fill="#d5d2c4" />
+      <circle cx="150" cy="180" r="15" fill="#a0bcd1" />
+      <circle cx="210" cy="180" r="15" fill="#a0bcd1" />
+      <circle cx="320" cy="165" r="15" fill="#a0bcd1" />
+      <circle cx="320" cy="245" r="15" fill="#a0bcd1" />
+      <path
+        d="M150 190 L150 250 L210 250 L210 190"
+        stroke="#a0bcd1"
+        strokeWidth="2"
+        fill="none"
+      />
+      <path
+        d="M320 175 L320 200"
+        stroke="#a0bcd1"
+        strokeWidth="2"
+        fill="none"
+      />
+      <path
+        d="M320 255 L320 280"
+        stroke="#a0bcd1"
+        strokeWidth="2"
+        fill="none"
+      />
+      <rect x="140" y="90" width="220" height="20" rx="3" fill="#647c90" />
+    </svg>
   );
 }
