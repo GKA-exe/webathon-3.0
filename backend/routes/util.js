@@ -36,8 +36,8 @@ const createStudentorAdmin = async (req, res) => {
 };
 
 const studentOrAdminLogin = async (req, res) => {
-    const studentsCollection = req.app.get("studentsCollection");
-    const adminCollection = req.app.get("adminCollection");
+  const studentsCollection = req.app.get("studentsCollection");
+  const adminCollection = req.app.get("adminCollection");
 
   const userCred = req.body;
 
@@ -57,7 +57,7 @@ const studentOrAdminLogin = async (req, res) => {
           process.env.SECRET_KEY,
           {
             expiresIn: "1d",
-          }
+          },
         );
 
         delete dbuser.password;
@@ -86,7 +86,7 @@ const studentOrAdminLogin = async (req, res) => {
           process.env.SECRET_KEY,
           {
             expiresIn: "1d",
-          }
+          },
         );
 
         delete dbuser.password;
