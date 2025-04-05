@@ -12,8 +12,10 @@ mongoClient
     const dbObj = client.db("hosteldb");
     const studentsCollection = dbObj.collection("students");
     const adminCollection = dbObj.collection("admin");
+    const leaveCollection = dbObj.collection("leaves");
     app.set("studentsCollection", studentsCollection);
     app.set("adminCollection", adminCollection);
+    app.set("leaveCollection", leaveCollection);
     console.log("Database connection established");
 })
 .catch((err) => {
@@ -23,11 +25,13 @@ mongoClient
 // Import apis
 const studentApp = require("./routes/students");
 const adminApp = require("./routes/admin");
+const leaveApp = require("./routes/leave");
 
 // Define routes for APIs
 app.use(express.json());
 app.use("/student", studentApp);
 app.use("/admin", adminApp);
+app.use("/leave", leaveApp);
 
 app.get("/status", (req, res) => {
     res.send({message: "The server is up", status: "Live"});

@@ -27,20 +27,34 @@ studentApp.post("/delete", expressAsyncHandler(async (req, res) => {
   }
 }));
 
-// Leave Request
-studentApp.post("/leave", expressAsyncHandler(async (req, res) => {
+// Attendance -> Mark Entry
+studentApp.post("/attendance/mark", expressAsyncHandler(async (req, res) => {
   const studentsCollection = req.app.get("studentsCollection");
-  const leaveRequest = req.body;
+  const attendance = req.body;
   const result = await studentsCollection.updateOne(
-    { email: leaveRequest.email },
-    { onleave: "Pending" }
+    { email: attendance.email },
+    { $set: { attendance: "true" } }
   );
   if (result.modifiedCount === 1) {
-    res.send({ message: "Leave request submitted successfully" });
+    res.send({ message: "Entrance marked successfully" });
   } else {
-    res.send({ message: "Failed to submit leave request" });
+    res.send({ message: "Failed to mark attendance" });
   }
 }));
 
+// Attendance -> Mark Exit
+studentApp.post("/attendance/exit", expressAsyncHandler(async (req, res) => {
+  const studentsCollection = req.app.get("studentsCollection");
+  const attendance = req.body;
+  const result = await studentsCollection.updateOne(
+    { email: attendance.email },
+    { $set: { attendance: "false" } }
+  );
+  if (result.modifiedCount === 1) {
+    res.send({ message: "Exit marked successfully" });
+  } else {
+    res.send({ message: "Failed to mark exit" });
+  }
+}));
 
 module.exports = studentApp;
