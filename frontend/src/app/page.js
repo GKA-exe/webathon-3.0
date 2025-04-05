@@ -22,13 +22,13 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e2ded0]">
+    <div className="min-h-screen bg-nav">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 bg-[#e2ded0] shadow-md z-50">
+      <nav className="fixed top-0 left-0 right-0 bg-[#1e2939] shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="font-bold text-xl text-[#647c90]">
+              <Link href="/" className="font-bold text-xl text-textc">
                 NARKAM
               </Link>
             </div>
@@ -36,16 +36,16 @@ export default function LandingPage() {
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4">
               <Link
-                href="/register"
-                className="text-[#647c90] hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium"
-              >
-                Register
-              </Link>
-              <Link
                 href="/login"
-                className="bg-[#647c90] text-[#e2ded0] px-4 py-2 rounded-md font-medium hover:bg-[#a0bcd1]"
+                className="text-textc px-4 py-2 rounded-md font-medium hover:text-[#a0bcd1]"
               >
                 Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="text-textc hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium"
+              >
+                Register
               </Link>
             </div>
 
