@@ -17,9 +17,9 @@ problemRouter.post(
   "/",
   expressAsyncHandler(async (req, res) => {
     const problemCollection = req.app.get("problemCollection");
-    const { mailId, tag, description, roomNumber } = req.body;
+    const { email, tag, description, roomNumber } = req.body;
 
-    if (!mailId || !tag || !description || !roomNumber) {
+    if (!email || !tag || !description || !roomNumber) {
       return res.status(400).send({ message: "Missing required fields" });
     }
 
@@ -28,7 +28,7 @@ problemRouter.post(
 
     const newProblem = {
       problemId,
-      mailId,
+      email,
       tag,
       timestamp,
       status: "pending",

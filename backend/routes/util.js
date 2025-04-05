@@ -1,6 +1,24 @@
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const QRCode = require('qrcode');
+const fs = require('fs');
+const path = require('path');
 require("dotenv").config();
+
+async function generateQRcode(email) {
+  const studentsCollection = req.app.get("studentsCollection");
+  const result = await studentsCollection.updateOne(
+    { email: attendance.email },
+    { $set: { attendance: "true" } }
+  );
+  const timestamp = Date.now().toString();
+  const fileName = `${timestamp}.png`;
+  const qrCodePath = path.join(__dirname, `../public/${fileName}.png`);
+  QRCode.toFile(qrCodePath, email, function (err) {
+    if (err) throw err;
+    console.log('QR code generated!');
+  });
+}
 
 // Request handler for student/admin registration
 const createStudentorAdmin = async (req, res) => {
@@ -27,6 +45,18 @@ const createStudentorAdmin = async (req, res) => {
   user.password = await bcryptjs.hash(user.password, 7);
 
   if (user.userType === "student") {
+    // QR Code generation
+    const timestamp = Date.now().toString();
+    const fileName = `${timestamp}.png`;
+    const qrCodePath = path.join(__dirname, `../public/qr/${fileName}`);
+    user.qrCodePath = `/qr/${fileName}`;
+    let qrOutput = `{\n\t\"email\" : \"${user.email}\"\n}`;
+    QRCode.toFile(qrCodePath, qrOutput, { margin: 2},  function (err) {
+      if (err) throw err;
+      console.log('QR code generated!');
+    });
+
+    // DB insertion
     await studentsCollection.insertOne(user);
     res.send({ message: "Student created" });
   } else if (user.userType === "admin") {
@@ -36,8 +66,8 @@ const createStudentorAdmin = async (req, res) => {
 };
 
 const studentOrAdminLogin = async (req, res) => {
-    const studentsCollection = req.app.get("studentsCollection");
-    const adminCollection = req.app.get("adminCollection");
+  const studentsCollection = req.app.get("studentsCollection");
+  const adminCollection = req.app.get("adminCollection");
 
   const userCred = req.body;
 
@@ -57,7 +87,7 @@ const studentOrAdminLogin = async (req, res) => {
           process.env.SECRET_KEY,
           {
             expiresIn: "1d",
-          }
+          },
         );
 
         delete dbuser.password;
@@ -86,7 +116,7 @@ const studentOrAdminLogin = async (req, res) => {
           process.env.SECRET_KEY,
           {
             expiresIn: "1d",
-          }
+          },
         );
 
         delete dbuser.password;
