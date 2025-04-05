@@ -44,26 +44,32 @@ export default function Login() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#e2ded0] text-[#4e4f50]">
+    <div className="min-h-screen flex flex-col bg-nav text-[#4e4f50]">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 bg-[#e2ded0] shadow-md z-50">
+      <nav className="fixed top-0 left-0 right-0 bg-[#1e2939] shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="font-bold text-xl text-[#647c90] hover:text-[#a0bcd1] transition-colors">
+              <Link href="/" className="font-bold text-xl text-textc">
                 NARKAM
               </Link>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
-              <Link href="/" className="text-[#647c90] hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium transition-colors">
+              <Link href="/" className="text-textc hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium transition-colors">
                 Home
               </Link>
-              <Link href="/register" className="text-[#647c90] hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium transition-colors">
-                Register
-              </Link>
-              <Link href="/login" className="bg-[#647c90] text-[#e2ded0] px-4 py-2 rounded-md font-medium hover:bg-[#a0bcd1] transition-colors">
+              <Link
+                href="/login"
+                className="bg-[#647c90] text-textc px-4 py-2 rounded-md font-medium hover:bg-[#a0bcd1]"
+              >
                 Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="text-textc hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium"
+              >
+                Register
               </Link>
             </div>
 
@@ -172,7 +178,7 @@ export default function Login() {
           {/* Right Side - Login Form */}
           <motion.div
             onMouseMove={handleMouseMove}
-            style={{ background }}
+            style={{ backgroundColor: "#E5E1DA", ...background }}
             className="relative bg-[#a0bcd1] p-8 w-full md:w-1/2 transition-all duration-300 group/form shadow-inner"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
