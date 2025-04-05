@@ -14,6 +14,36 @@ studentApp.post("/create", expressAsyncHandler(createStudentorAdmin));
 // student Login
 studentApp.post("/login", expressAsyncHandler(studentOrAdminLogin));
 
+// Fetch a student by email
+studentApp.get(
+  "/:email",
+  expressAsyncHandler(async (req, res) => {
+    const studentsCollection = req.app.get("studentsCollection");
+    const email = req.params.email;
+    const student = await studentsCollection.findOne({ email: email });
+    if (student) {
+      res.send(student);
+    } else {
+      res.send({ message: "Student not found" });
+    }
+  }),
+);
+
+// Fetch is a student is in Hostel or not
+studentApp.get(
+  "/:email/inhostel",
+  expressAsyncHandler(async (req, res) => {
+    const studentsCollection = req.app.get("studentsCollection");
+    const email = req.params.email;
+    const student = await studentsCollection.findOne({ email: email });
+    if (student.attendance === "false" || student.onLeave === "approved") {
+      res.send({ inHostel: false });
+    } else {
+      res.send({ inHostel: true });
+    }
+  }),
+);
+
 // Delete Student
 studentApp.post(
   "/delete",
