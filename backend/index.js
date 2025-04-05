@@ -14,11 +14,13 @@ mongoClient
     const leaveCollection = dbObj.collection("leaves");
     const problemCollection = dbObj.collection("problem");
     const roomCollection = dbObj.collection("rooms");
+    const announcementCollection = dbObj.collection("announcements");
     app.set("studentsCollection", studentsCollection);
     app.set("adminCollection", adminCollection);
     app.set("leaveCollection", leaveCollection);
     app.set("problemCollection", problemCollection);
     app.set("roomCollection", roomCollection);
+    app.set("announcementCollection", announcementCollection);
     console.log("Database connection established");
   })
   .catch((err) => {

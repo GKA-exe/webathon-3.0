@@ -14,9 +14,27 @@ studentApp.post("/create", expressAsyncHandler(createStudentorAdmin));
 // student Login
 studentApp.post("/login", expressAsyncHandler(studentOrAdminLogin));
 
+// Student Update
+studentApp.post(
+  "/update",
+  expressAsyncHandler(async (req, res) => {
+    const studentsCollection = req.app.get("studentsCollection");
+    const student = req.body;
+    const result = await studentsCollection.updateOne(
+      { email: student.email },
+      { $set: student },
+    );
+    if (result.modifiedCount === 1) {
+      res.send({ message: "Student updated successfully" });
+    } else {
+      res.send({ message: "Failed to update student" });
+    }
+  }),
+);
+
 // Fetch a student by email
 studentApp.get(
-  "/:email",
+  "/fetch/:email",
   expressAsyncHandler(async (req, res) => {
     const studentsCollection = req.app.get("studentsCollection");
     const email = req.params.email;
@@ -89,5 +107,15 @@ studentApp.post("/attendance/exit", expressAsyncHandler(async (req, res) => {
     res.send({ message: "Failed to mark exit" });
   }
 }));
+
+// Fetch All Announcements
+studentApp.get(
+  "/announcement",
+  expressAsyncHandler(async (req, res) => {
+    const announcementCollection = req.app.get("announcementCollection");
+    const announcements = await announcementCollection.find({}).toArray();
+    res.send(announcements);
+  }),
+);
 
 module.exports = studentApp;
