@@ -10,11 +10,21 @@ studentApp.get("/create",
     res.send({ message: "This is the GET endpoint"});
   }))
 
-studentApp.post("/user", expressAsyncHandler(createStudentorAdmin));
+studentApp.post("/create", expressAsyncHandler(createStudentorAdmin));
 
 // admin Login
 studentApp.post("/login", expressAsyncHandler(studentOrAdminLogin));
 
-
+// Delete Student
+studentApp.post("/delete", expressAsyncHandler(async (req, res) => {
+  const studentsCollection = req.app.get("studentsCollection");
+  const email = req.body.email;
+  const result = await studentsCollection.deleteOne({ email: email });
+  if (result.deletedCount === 1) {
+    res.send({ message: "Student deleted successfully" });
+  } else {
+    res.send({ message: "Student not found" });
+  }
+}));
 
 module.exports = studentApp;
