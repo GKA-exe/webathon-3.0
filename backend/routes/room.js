@@ -25,6 +25,7 @@ roomRouter.post(
       maxCapacity,
       currentCapacity: maxCapacity,
       students: [],
+      mails: [],
     };
 
     await roomCollection.insertOne(newRoom);
@@ -88,7 +89,7 @@ roomRouter.post(
       { roomNumber },
       {
         $inc: { currentCapacity: -1 },
-        $addToSet: { students: email },
+        $addToSet: { mails: email, students: student.name },
       },
     );
 
@@ -129,7 +130,7 @@ roomRouter.post(
       { roomNumber },
       {
         $inc: { currentCapacity: 1 },
-        $pull: { students: email },
+        $pull: { students: student.name, mails: email },
       },
     );
 
