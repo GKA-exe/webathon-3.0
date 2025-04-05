@@ -1,5 +1,6 @@
 import React from 'react';
 import SNavbar from '@/Components/SNavbar/SNavbar';
+import ComplaintForm from '@/Components/StudentComps/complaint';
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 
@@ -22,6 +23,7 @@ export default function StudentLayout({ children }) {
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             <SNavbar />
+            <ComplaintForm />
           {children}
             
         </body>
