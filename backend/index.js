@@ -32,6 +32,9 @@ const problemApp = require("./routes/problems");
 
 // Define routes for APIs
 app.use(express.json());
+
+app.use("/qr", express.static("public/qr"));
+
 app.use("/student", studentApp);
 app.use("/admin", adminApp);
 app.use("/leave", leaveApp);
