@@ -81,9 +81,9 @@ const StudentNotifications = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4">
+    <div className="bg-background min-h-screen p-4">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow">
-        <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">
+        <div style={{ backgroundColor: '#647c90' }} className="text-white p-4 rounded-t-lg flex justify-between items-center">
           <h1 className="text-xl font-bold">Hostel Notifications</h1>
           <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
             {notifications.filter(n => !n.isRead).length} New
@@ -95,7 +95,8 @@ const StudentNotifications = () => {
             notifications.map(notification => (
               <div 
                 key={notification.id} 
-                className={`p-4 hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-blue-50' : ''}`}
+                className={`p-4 hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-opacity-10' : ''}`}
+                style={!notification.isRead ? { backgroundColor: 'rgba(100, 124, 144, 0.1)' } : {}}
                 onClick={() => markAsRead(notification.id)}
               >
                 <div className="flex items-start">
@@ -104,13 +105,15 @@ const StudentNotifications = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
-                      <h3 className={`font-medium ${!notification.isRead ? 'font-bold text-blue-700' : 'text-gray-800'}`}>
+                      <h3 className={`font-medium ${!notification.isRead ? 'font-bold' : 'text-gray-800'}`}
+                          style={!notification.isRead ? { color: '#647c90' } : {}}>
                         {notification.title}
                       </h3>
                       <div className="text-xs text-gray-500 ml-2">
                         {notification.date} • {notification.time}
                         {!notification.isRead && (
-                          <span className="ml-2 bg-blue-600 w-2 h-2 inline-block rounded-full"></span>
+                          <span className="ml-2 w-2 h-2 inline-block rounded-full" 
+                                style={{ backgroundColor: '#647c90' }}></span>
                         )}
                       </div>
                     </div>
@@ -129,11 +132,13 @@ const StudentNotifications = () => {
         </div>
         
         <div className="bg-gray-50 p-4 rounded-b-lg text-center border-t">
-          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <button className="hover:text-opacity-80 text-sm font-medium" 
+                  style={{ color: '#647c90' }}>
             Mark All as Read
           </button>
           <span className="mx-2 text-gray-300">|</span>
-          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <button className="hover:text-opacity-80 text-sm font-medium"
+                  style={{ color: '#647c90' }}>
             View Archived Notifications
           </button>
         </div>
