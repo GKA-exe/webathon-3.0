@@ -63,7 +63,7 @@ const SNavbar = () => {
           <div className="hidden md:flex md:space-x-6">
             <NavItem label="Dashboard" href="/student/dashboard" />
             <NavItem label="Mess" href="/student/mess" />
-            <NavItem label="Lost&Found" href="/student/lost-and-found" />
+            <NavItem label="Lost&Found" href="/student/lostfound" />
             <NavItem label="Raise Complaint" href="/student/complaint" />
             <NavItem label="Fee Payment" href="/student/fee-payment" />
             
@@ -140,7 +140,7 @@ const SNavbar = () => {
           <div className="md:hidden mt-4 flex flex-col space-y-4 border-t border-gray-700 pt-4">
             <MobileNavItem label="Dashboard" href="/student/dashboard" />
             <MobileNavItem label="Mess" href="/student/mess" />
-            <MobileNavItem label="Lost&Found" href="/student/lost-and-found" />
+            <MobileNavItem label="Lost&Found" href="/student/lostfound" />
             <MobileNavItem label="Raise Complaint" href="/student/complaint" />
             <MobileNavItem label="Fee Payment" href="/student/fee-payment" />
             
