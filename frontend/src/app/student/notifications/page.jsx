@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const StudentNotifications = () => {
   // Sample notifications data
@@ -60,12 +60,82 @@ const StudentNotifications = () => {
     }
   ]);
 
+  const [announcements, setAnnouncements] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [combinedNotifications, setCombinedNotifications] = useState([]);
+
   // Mark notification as read
   const markAsRead = (id) => {
-    setNotifications(notifications.map(notif => 
+    setCombinedNotifications(combinedNotifications.map(notif => 
       notif.id === id ? { ...notif, isRead: true } : notif
     ));
   };
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/admin/announcement`
+        );
+        
+        if (!response.ok) throw new Error('Failed to load announcements');
+        const data = await response.json();
+        
+        // Transform announcements to match notification format
+        const formattedAnnouncements = Array.isArray(data) ? data.map(a => {
+          const announcementDate = new Date(a.date);
+          return {
+            id: `announcement-${a.id}`, // Unique ID with prefix to avoid conflicts
+            title: a.title || "Announcement",
+            message: a.content || a.description || "",
+            date: announcementDate.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'}),
+            time: announcementDate.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'}),
+            isRead: false,
+            category: a.category || "announcement",
+            isAnnouncement: true // Flag to identify source
+          };
+        }) : [];
+        
+        setAnnouncements(formattedAnnouncements);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchAnnouncements();
+  }, []);
+
+  // Combine notifications and announcements when either changes
+  useEffect(() => {
+    // Create a map of existing notification titles to check for duplicates
+    const titleMap = new Map();
+    
+    // Add static notifications first
+    const combined = [...notifications];
+    notifications.forEach(notif => {
+      titleMap.set(notif.title.toLowerCase(), true);
+    });
+    
+    // Add announcements, skipping duplicates
+    announcements.forEach(announcement => {
+      if (!titleMap.has(announcement.title.toLowerCase())) {
+        combined.push(announcement);
+        titleMap.set(announcement.title.toLowerCase(), true);
+      }
+    });
+    
+    // Sort by date (newest first)
+    combined.sort((a, b) => {
+      const dateA = new Date(`${a.date} ${a.time}`);
+      const dateB = new Date(`${b.date} ${b.time}`);
+      return dateB - dateA;
+    });
+    
+    setCombinedNotifications(combined);
+  }, [notifications, announcements]);
 
   // Get category icon
   const getCategoryIcon = (category) => {
@@ -76,8 +146,14 @@ const StudentNotifications = () => {
       case 'services': return '📡';
       case 'payment': return '💰';
       case 'policy': return '📝';
+      case 'announcement': return '📣';
       default: return '📢';
     }
+  };
+
+  // Mark all as read
+  const markAllAsRead = () => {
+    setCombinedNotifications(combinedNotifications.map(notif => ({ ...notif, isRead: true })));
   };
 
   return (
@@ -86,13 +162,21 @@ const StudentNotifications = () => {
         <div style={{ backgroundColor: '#647c90' }} className="text-white p-4 rounded-t-lg flex justify-between items-center">
           <h1 className="text-xl font-bold">Hostel Notifications</h1>
           <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
-            {notifications.filter(n => !n.isRead).length} New
+            {combinedNotifications.filter(n => !n.isRead).length} New
           </span>
         </div>
         
         <div className="divide-y">
-          {notifications.length > 0 ? (
-            notifications.map(notification => (
+          {isLoading ? (
+            <div className="p-8 text-center text-gray-500">
+              Loading notifications...
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center text-red-500">
+              Error: {error}
+            </div>
+          ) : combinedNotifications.length > 0 ? (
+            combinedNotifications.map(notification => (
               <div 
                 key={notification.id} 
                 className={`p-4 hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-opacity-10' : ''}`}
@@ -108,6 +192,11 @@ const StudentNotifications = () => {
                       <h3 className={`font-medium ${!notification.isRead ? 'font-bold' : 'text-gray-800'}`}
                           style={!notification.isRead ? { color: '#647c90' } : {}}>
                         {notification.title}
+                        {notification.isAnnouncement && (
+                          <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">
+                            Announcement
+                          </span>
+                        )}
                       </h3>
                       <div className="text-xs text-gray-500 ml-2">
                         {notification.date} • {notification.time}
@@ -132,8 +221,11 @@ const StudentNotifications = () => {
         </div>
         
         <div className="bg-gray-50 p-4 rounded-b-lg text-center border-t">
-          <button className="hover:text-opacity-80 text-sm font-medium" 
-                  style={{ color: '#647c90' }}>
+          <button 
+            className="hover:text-opacity-80 text-sm font-medium" 
+            style={{ color: '#647c90' }}
+            onClick={markAllAsRead}
+          >
             Mark All as Read
           </button>
           <span className="mx-2 text-gray-300">|</span>

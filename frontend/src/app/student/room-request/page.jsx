@@ -159,7 +159,7 @@ const RoomRequestForm = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.name ? "border-red-500" : "border-gray-200"}`}
+                        className={`w-full p-3 bg-gray-50 border rounded-lg text-black text-sm ${errors.name ? "border-red-500" : "border-gray-200"}`}
                         placeholder="Enter your full name"
                       />
                       {errors.name && (
@@ -184,7 +184,7 @@ const RoomRequestForm = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.email ? "border-red-500" : "border-gray-200"}`}
+                        className={`w-full p-3 bg-gray-50 border text-black rounded-lg text-sm ${errors.email ? "border-red-500" : "border-gray-200"}`}
                         placeholder="your.email@example.com"
                       />
                       {errors.email && (
@@ -211,7 +211,7 @@ const RoomRequestForm = () => {
                         name="contact"
                         value={formData.contact}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.contact ? "border-red-500" : "border-gray-200"}`}
+                        className={`w-full p-3 bg-gray-50 border text-black rounded-lg text-sm ${errors.contact ? "border-red-500" : "border-gray-200"}`}
                         placeholder="10-digit mobile number"
                       />
                       {errors.contact && (
@@ -236,7 +236,7 @@ const RoomRequestForm = () => {
                         name="dob"
                         value={formData.dob}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.dob ? "border-red-500" : "border-gray-200"}`}
+                        className={`w-full p-3 bg-gray-50 border text-black rounded-lg text-sm ${errors.dob ? "border-red-500" : "border-gray-200"}`}
                       />
                       {errors.dob && (
                         <p className="text-red-500 text-xs mt-1">
@@ -261,7 +261,7 @@ const RoomRequestForm = () => {
                       rows="3"
                       value={formData.address}
                       onChange={handleChange}
-                      className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.address ? "border-red-500" : "border-gray-200"}`}
+                      className={`w-full p-3 bg-gray-50 border text-black rounded-lg text-sm ${errors.address ? "border-red-500" : "border-gray-200"}`}
                       placeholder="Enter your complete address"
                     ></textarea>
                     {errors.address && (
@@ -293,7 +293,7 @@ const RoomRequestForm = () => {
                         name="parentName"
                         value={formData.parentName}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.parentName ? "border-red-500" : "border-gray-200"}`}
+                        className={`w-full p-3 bg-gray-50 border text-black rounded-lg text-sm ${errors.parentName ? "border-red-500" : "border-gray-200"}`}
                         placeholder="Enter parent/guardian name"
                       />
                       {errors.parentName && (
@@ -318,7 +318,7 @@ const RoomRequestForm = () => {
                         name="parentContact"
                         value={formData.parentContact}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.parentContact ? "border-red-500" : "border-gray-200"}`}
+                        className={`w-full p-3 bg-gray-50 border text-black rounded-lg text-sm ${errors.parentContact ? "border-red-500" : "border-gray-200"}`}
                         placeholder="10-digit mobile number"
                       />
                       {errors.parentContact && (
@@ -350,7 +350,7 @@ const RoomRequestForm = () => {
                       name="bloodGroup"
                       value={formData.bloodGroup}
                       onChange={handleChange}
-                      className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.bloodGroup ? "border-red-500" : "border-gray-200"}`}
+                      className={`w-full p-3 bg-gray-50 border rounded-lg text-black text-sm ${errors.bloodGroup ? "border-red-500" : "border-gray-200"}`}
                     >
                       <option value="">Select Blood Group</option>
                       <option value="A+">A+</option>
