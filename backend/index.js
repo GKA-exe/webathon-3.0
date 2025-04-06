@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 3000;
@@ -29,11 +30,12 @@ mongoClient
 
 // Import apis
 const studentApp = require("./routes/students");
-const adminApp = require("./routes/admin")
+const adminApp = require("./routes/admin");
 const leaveApp = require("./routes/leave");
 const problemApp = require("./routes/problems");
 const roomApp = require("./routes/room");
 
+app.use(cors());
 // Define routes for APIs
 app.use(express.json());
 
@@ -51,7 +53,7 @@ app.get("/status", (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    res.send({ status: "Error", message: err.message });
+  res.send({ status: "Error", message: err.message });
 });
 
 app.listen(port, () => {

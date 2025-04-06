@@ -1,9 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, useMotionTemplate, useMotionValue, animate } from "framer-motion";
-import { User, Mail, Lock, Phone, Shield, CheckCircle, Loader2, Menu } from "lucide-react";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  animate,
+} from "framer-motion";
+import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  Shield,
+  CheckCircle,
+  Loader2,
+  Menu,
+} from "lucide-react";
 import Link from "next/link";
+import axios from "axios";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -11,7 +26,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    contactNumber: ""
+    contactNumber: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -25,7 +40,7 @@ export default function Register() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const radius = useMotionValue(0);
-  
+
   // Modified the background template to include light blue as the base color
   const background = useMotionTemplate`radial-gradient(${radius}px circle at ${mouseX}px ${mouseY}px, rgba(100, 124, 144, 0.1), #e6f7ff 80%)`;
 
@@ -46,7 +61,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -60,19 +75,19 @@ export default function Register() {
     setIsLoading(true);
     try {
       // Replace with your actual API endpoint
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          ...formData,
-          userType: "student" 
-        }),
-      });
+      const studentData = { ...formData, userType: "student" };
+      delete studentData.confirmPassword;
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL}/student/create`,
+        studentData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
-      }
+      console.log(response.data);
 
       setSuccess(true);
       setFormData({
@@ -80,7 +95,7 @@ export default function Register() {
         email: "",
         password: "",
         confirmPassword: "",
-        contactNumber: ""
+        contactNumber: "",
       });
     } catch (err) {
       setError(err.message);
@@ -99,7 +114,7 @@ export default function Register() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -118,7 +133,10 @@ export default function Register() {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
-              <Link href="/" className="text-textc hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium transition-colors">
+              <Link
+                href="/"
+                className="text-textc hover:text-[#a0bcd1] px-3 py-2 rounded-md font-medium transition-colors"
+              >
                 Home
               </Link>
               <Link
@@ -127,7 +145,10 @@ export default function Register() {
               >
                 Sign In
               </Link>
-              <Link href="/register" className="bg-[#647c90] text-[#e2ded0] px-4 py-2 rounded-md font-medium hover:bg-[#a0bcd1] transition-colors">
+              <Link
+                href="/register"
+                className="bg-[#647c90] text-[#e2ded0] px-4 py-2 rounded-md font-medium hover:bg-[#a0bcd1] transition-colors"
+              >
                 Register
               </Link>
             </div>
@@ -147,13 +168,22 @@ export default function Register() {
         {isMenuOpen && (
           <div className="md:hidden bg-[#e2ded0] shadow-lg">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link href="/" className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4] transition-colors">
+              <Link
+                href="/"
+                className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4] transition-colors"
+              >
                 Home
               </Link>
-              <Link href="/register" className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4] transition-colors">
+              <Link
+                href="/register"
+                className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4] transition-colors"
+              >
                 Register
               </Link>
-              <Link href="/login" className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4] transition-colors">
+              <Link
+                href="/login"
+                className="block px-3 py-2 rounded-md text-base font-medium text-[#647c90] hover:text-[#a0bcd1] hover:bg-[#d5d2c4] transition-colors"
+              >
                 Sign In
               </Link>
             </div>
@@ -165,7 +195,7 @@ export default function Register() {
       <main className="flex-1 flex items-center justify-center pt-24 pb-16 px-4">
         <div className="w-full max-w-6xl flex flex-col md:flex-row rounded-3xl overflow-hidden shadow-xl border border-[#647c90]/30 hover:shadow-2xl transition-all duration-300">
           {/* Illustration Section */}
-          <motion.div 
+          <motion.div
             className="bg-[#647c90] text-[#e2ded0] p-8 md:p-12 flex flex-col justify-center md:w-1/2 border-r border-[#647c90]/50"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -179,8 +209,10 @@ export default function Register() {
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#a0bcd1]/10 rounded-full -mt-20 -mr-32 blur-2xl" />
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#4e4f50]/10 rounded-full -mb-10 -ml-20 blur-xl" />
-              
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">Join Our Community</h1>
+
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                Join Our Community
+              </h1>
               <ul className="space-y-4 text-lg">
                 <li className="flex items-center gap-3">
                   <CheckCircle className="text-[#a0bcd1] flex-shrink-0" />
@@ -249,7 +281,9 @@ export default function Register() {
 
               {/* Name Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#4e4f50]/80">Full Name</label>
+                <label className="text-sm font-medium text-[#4e4f50]/80">
+                  Full Name
+                </label>
                 <div className="relative">
                   <input
                     type="text"
@@ -266,7 +300,9 @@ export default function Register() {
 
               {/* Email Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#4e4f50]/80">Email Address</label>
+                <label className="text-sm font-medium text-[#4e4f50]/80">
+                  Email Address
+                </label>
                 <div className="relative">
                   <input
                     type="email"
@@ -283,7 +319,9 @@ export default function Register() {
 
               {/* Contact Number Input */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#4e4f50]/80">Contact Number</label>
+                <label className="text-sm font-medium text-[#4e4f50]/80">
+                  Contact Number
+                </label>
                 <div className="relative">
                   <input
                     type="tel"
@@ -302,7 +340,9 @@ export default function Register() {
               {/* Password Inputs */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#4e4f50]/80">Password</label>
+                  <label className="text-sm font-medium text-[#4e4f50]/80">
+                    Password
+                  </label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
@@ -324,7 +364,9 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#4e4f50]/80">Confirm Password</label>
+                  <label className="text-sm font-medium text-[#4e4f50]/80">
+                    Confirm Password
+                  </label>
                   <div className="relative">
                     <input
                       type="password"
@@ -362,11 +404,17 @@ export default function Register() {
                 />
                 <span className="text-sm text-[#4e4f50]/80">
                   I agree to the{" "}
-                  <Link href="/terms" className="text-[#647c90] hover:underline">
+                  <Link
+                    href="/terms"
+                    className="text-[#647c90] hover:underline"
+                  >
                     Terms of Service
                   </Link>{" "}
                   and{" "}
-                  <Link href="/privacy" className="text-[#647c90] hover:underline">
+                  <Link
+                    href="/privacy"
+                    className="text-[#647c90] hover:underline"
+                  >
                     Privacy Policy
                   </Link>
                 </span>
@@ -389,7 +437,7 @@ export default function Register() {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-3 bg-[#647c90]/10 text-green-600 rounded-lg border border-green-200 text-sm"
                 >
-                  Registration successful! Check your email for verification.
+                  Registration successful!
                 </motion.div>
               )}
 
@@ -416,7 +464,10 @@ export default function Register() {
 
               <p className="text-center text-sm text-[#4e4f50]/80">
                 Already have an account?{" "}
-                <Link href="/login" className="text-[#647c90] font-medium hover:underline">
+                <Link
+                  href="/login"
+                  className="text-[#647c90] font-medium hover:underline"
+                >
                   Sign in here
                 </Link>
               </p>
@@ -430,7 +481,10 @@ export default function Register() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-[#e2ded0]/90">
             © 2025 NARKAM. All rights reserved. |{" "}
-            <Link href="/contact" className="hover:text-[#a0bcd1] transition-colors">
+            <Link
+              href="/contact"
+              className="hover:text-[#a0bcd1] transition-colors"
+            >
               Contact Support
             </Link>
           </p>

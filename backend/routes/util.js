@@ -1,22 +1,22 @@
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const QRCode = require('qrcode');
-const fs = require('fs');
-const path = require('path');
+const QRCode = require("qrcode");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
 async function generateQRcode(email) {
   const studentsCollection = req.app.get("studentsCollection");
   const result = await studentsCollection.updateOne(
     { email: attendance.email },
-    { $set: { attendance: "true" } }
+    { $set: { attendance: "true" } },
   );
   const timestamp = Date.now().toString();
   const fileName = `${timestamp}.png`;
   const qrCodePath = path.join(__dirname, `../public/${fileName}.png`);
   QRCode.toFile(qrCodePath, email, function (err) {
     if (err) throw err;
-    console.log('QR code generated!');
+    console.log("QR code generated!");
   });
 }
 
@@ -29,7 +29,6 @@ const createStudentorAdmin = async (req, res) => {
 
   if (user.userType === "student") {
     const dbuser = await studentsCollection.findOne({ email: user.email });
-    console.log(dbuser);
     if (dbuser !== null) {
       return res.send({ message: "Student already exists" });
     }
@@ -46,15 +45,15 @@ const createStudentorAdmin = async (req, res) => {
 
   if (user.userType === "student") {
     // QR Code generation
-    user.feeDue = 50;
+    user.feeDue = 5000;
     const timestamp = Date.now().toString();
     const fileName = `${timestamp}.png`;
     const qrCodePath = path.join(__dirname, `../public/qr/${fileName}`);
     user.qrCodePath = `/qr/${fileName}`;
     let qrOutput = `{\n\t\"email\" : \"${user.email}\"\n}`;
-    QRCode.toFile(qrCodePath, qrOutput, { margin: 2},  function (err) {
+    QRCode.toFile(qrCodePath, qrOutput, { margin: 2 }, function (err) {
       if (err) throw err;
-      console.log('QR code generated!');
+      console.log("QR code generated!");
     });
 
     // DB insertion
