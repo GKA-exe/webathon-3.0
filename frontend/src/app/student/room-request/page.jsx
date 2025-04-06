@@ -6,14 +6,12 @@ import { Home, ArrowLeft, User, Mail, Phone, Calendar, MapPin, Users, Droplet } 
 const RoomRequestForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    contact: '',
     dob: '',
     address: '',
     parentName: '',
     parentContact: '',
-    bloodGroup: ''
+    bloodGroup: '',
+    room: 'searching'
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,13 +27,6 @@ const RoomRequestForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
-    
-    if (!formData.contact.trim()) newErrors.contact = "Contact number is required";
-    else if (!/^\d{10}$/.test(formData.contact)) newErrors.contact = "Contact should be 10 digits";
     
     if (!formData.dob) newErrors.dob = "Date of Birth is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
@@ -61,20 +52,9 @@ const RoomRequestForm = () => {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would be an API call to your backend
-      // await axios.post('/api/room-request', formData);
-      
-      // Simulate API call
+      console.log('Submitting form:', formData);
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Update the student's status in your authentication system
-      // This is where you'd update isFirstLogin to false and set request status to "pending"
-      
-      // Redirect to dashboard
       router.push('/student/dashboard');
-      
-      // Show success message
-      alert('Room request submitted successfully! Your request is pending approval.');
       
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -87,7 +67,6 @@ const RoomRequestForm = () => {
   return (
     <div className="min-h-screen p-4 md:p-6" style={{ backgroundColor: '#e2ded0' }}>
       <div className="max-w-3xl mx-auto">
-        {/* Back button */}
         <button 
           onClick={() => router.push('/student/dashboard')}
           className="flex items-center text-gray-600 mb-6 hover:text-gray-800 transition-colors"
@@ -97,7 +76,6 @@ const RoomRequestForm = () => {
         </button>
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          {/* Header */}
           <div className="p-4 border-b" style={{ backgroundColor: '#647c90' }}>
             <h2 className="text-xl font-semibold flex items-center text-white">
               <Home size={20} className="mr-2" />
@@ -105,72 +83,13 @@ const RoomRequestForm = () => {
             </h2>
           </div>
           
-          {/* Form */}
           <div className="p-6">
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6">
-                {/* Personal Information Section */}
                 <div className="border-b border-gray-200 pb-6">
                   <h3 className="text-lg font-medium mb-4 text-gray-700">Personal Information</h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Name */}
-                    <div>
-                      <label htmlFor="name" className="flex items-center text-sm font-medium text-gray-600 mb-2">
-                        <User size={16} className="mr-2" />
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.name ? 'border-red-500' : 'border-gray-200'}`}
-                        placeholder="Enter your full name"
-                      />
-                      {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                    </div>
-                    
-                    {/* Email */}
-                    <div>
-                      <label htmlFor="email" className="flex items-center text-sm font-medium text-gray-600 mb-2">
-                        <Mail size={16} className="mr-2" />
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.email ? 'border-red-500' : 'border-gray-200'}`}
-                        placeholder="your.email@example.com"
-                      />
-                      {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                    </div>
-                  </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    {/* Contact */}
-                    <div>
-                      <label htmlFor="contact" className="flex items-center text-sm font-medium text-gray-600 mb-2">
-                        <Phone size={16} className="mr-2" />
-                        Contact Number
-                      </label>
-                      <input
-                        type="tel"
-                        id="contact"
-                        name="contact"
-                        value={formData.contact}
-                        onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.contact ? 'border-red-500' : 'border-gray-200'}`}
-                        placeholder="10-digit mobile number"
-                      />
-                      {errors.contact && <p className="text-red-500 text-xs mt-1">{errors.contact}</p>}
-                    </div>
-                    
-                    {/* DOB */}
                     <div>
                       <label htmlFor="dob" className="flex items-center text-sm font-medium text-gray-600 mb-2">
                         <Calendar size={16} className="mr-2" />
@@ -182,13 +101,14 @@ const RoomRequestForm = () => {
                         name="dob"
                         value={formData.dob}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.dob ? 'border-red-500' : 'border-gray-200'}`}
+                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm text-black ${
+                          errors.dob ? 'border-red-500' : 'border-gray-200'
+                        }`}
                       />
                       {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
                     </div>
                   </div>
                   
-                  {/* Address */}
                   <div className="mt-4">
                     <label htmlFor="address" className="flex items-center text-sm font-medium text-gray-600 mb-2">
                       <MapPin size={16} className="mr-2" />
@@ -200,19 +120,19 @@ const RoomRequestForm = () => {
                       rows="3"
                       value={formData.address}
                       onChange={handleChange}
-                      className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.address ? 'border-red-500' : 'border-gray-200'}`}
+                      className={`w-full p-3 bg-gray-50 border rounded-lg text-sm text-black ${
+                        errors.address ? 'border-red-500' : 'border-gray-200'
+                      }`}
                       placeholder="Enter your complete address"
                     ></textarea>
                     {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
                   </div>
                 </div>
                 
-                {/* Guardian Information Section */}
                 <div className="border-b border-gray-200 pb-6">
                   <h3 className="text-lg font-medium mb-4 text-gray-700">Guardian Information</h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Parent Name */}
                     <div>
                       <label htmlFor="parentName" className="flex items-center text-sm font-medium text-gray-600 mb-2">
                         <Users size={16} className="mr-2" />
@@ -224,13 +144,14 @@ const RoomRequestForm = () => {
                         name="parentName"
                         value={formData.parentName}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.parentName ? 'border-red-500' : 'border-gray-200'}`}
+                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm text-black ${
+                          errors.parentName ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         placeholder="Enter parent/guardian name"
                       />
                       {errors.parentName && <p className="text-red-500 text-xs mt-1">{errors.parentName}</p>}
                     </div>
                     
-                    {/* Parent Contact */}
                     <div>
                       <label htmlFor="parentContact" className="flex items-center text-sm font-medium text-gray-600 mb-2">
                         <Phone size={16} className="mr-2" />
@@ -242,7 +163,9 @@ const RoomRequestForm = () => {
                         name="parentContact"
                         value={formData.parentContact}
                         onChange={handleChange}
-                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.parentContact ? 'border-red-500' : 'border-gray-200'}`}
+                        className={`w-full p-3 bg-gray-50 border rounded-lg text-sm text-black ${
+                          errors.parentContact ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         placeholder="10-digit mobile number"
                       />
                       {errors.parentContact && <p className="text-red-500 text-xs mt-1">{errors.parentContact}</p>}
@@ -250,11 +173,9 @@ const RoomRequestForm = () => {
                   </div>
                 </div>
                 
-                {/* Other Information Section */}
                 <div>
                   <h3 className="text-lg font-medium mb-4 text-gray-700">Other Information</h3>
                   
-                  {/* Blood Group */}
                   <div className="max-w-xs">
                     <label htmlFor="bloodGroup" className="flex items-center text-sm font-medium text-gray-600 mb-2">
                       <Droplet size={16} className="mr-2" />
@@ -265,7 +186,9 @@ const RoomRequestForm = () => {
                       name="bloodGroup"
                       value={formData.bloodGroup}
                       onChange={handleChange}
-                      className={`w-full p-3 bg-gray-50 border rounded-lg text-sm ${errors.bloodGroup ? 'border-red-500' : 'border-gray-200'}`}
+                      className={`w-full p-3 bg-gray-50 border rounded-lg text-sm text-black ${
+                        errors.bloodGroup ? 'border-red-500' : 'border-gray-200'
+                      }`}
                     >
                       <option value="">Select Blood Group</option>
                       <option value="A+">A+</option>
