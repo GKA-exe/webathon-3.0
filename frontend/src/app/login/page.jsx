@@ -42,10 +42,9 @@ export default function Login() {
     );
 
     if (response.data.message === "login success") {
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ ...response.data.user, token: response.data.token }),
-      );
+      const userData = { ...response.data.user, token: response.data.token };
+      delete userData._id;
+      localStorage.setItem("user", JSON.stringify(userData));
     }
 
     router.push("/student/dashboard");
