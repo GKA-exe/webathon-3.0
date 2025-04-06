@@ -138,7 +138,6 @@ const RoomRequestForm = () => {
           <div className="p-6">
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6">
-                {/* Personal Information Section */}
                 <div className="border-b border-gray-200 pb-6">
                   <h3 className="text-lg font-medium mb-4 text-gray-700">
                     Personal Information
@@ -280,7 +279,6 @@ const RoomRequestForm = () => {
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Parent Name */}
                     <div>
                       <label
                         htmlFor="parentName"

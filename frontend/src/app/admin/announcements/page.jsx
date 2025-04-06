@@ -10,73 +10,143 @@ export default function AnnouncementsAdmin() {
   const [currentId, setCurrentId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Load announcements from localStorage
+  // Fetch announcements from backend
   useEffect(() => {
-    const savedAnnouncements = localStorage.getItem('announcements');
-    if (savedAnnouncements) {
-      setAnnouncements(JSON.parse(savedAnnouncements));
-    }
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/admin/announcement`
+        );
+        
+        if (!response.ok) throw new Error('Failed to load announcements');
+        const data = await response.json();
+        
+        setAnnouncements(Array.isArray(data) ? data.map(a => ({
+          ...a,
+          date: new Date(a.date),
+          ...(a.lastEdited && { lastEdited: new Date(a.lastEdited) })
+        })) : []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchAnnouncements();
   }, []);
-
-  // Save announcements to localStorage
-  useEffect(() => {
-    localStorage.setItem('announcements', JSON.stringify(announcements));
-  }, [announcements]);
 
   const handlePost = async (e) => {
     e.preventDefault();
     if (!title || !description) return;
 
     setIsSubmitting(true);
-    
+    setError(null);
+
     try {
-      if (isEditing && currentId !== null) {
-        const updated = announcements.map(item => 
-          item.id === currentId ? { 
-            ...item, 
-            title, 
-            description,
-            lastEdited: new Date().toLocaleString() 
-          } : item
-        );
-        setAnnouncements(updated);
-        setIsEditing(false);
-        setCurrentId(null);
-      } else {
-        const newAnnouncement = {
-          id: Date.now(),
+      const url = `${process.env.NEXT_PUBLIC_URL}/admin/announcement`;
+      const method = isEditing ? 'PATCH' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           title,
           description,
-          date: new Date().toLocaleString()
-        };
-        setAnnouncements([newAnnouncement, ...announcements]);
+          ...(isEditing && { _id: currentId })
+        })
+      });
+
+      if (!response.ok) throw new Error('Operation failed');
+
+      // Refresh the announcements list after successful operation
+      const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/admin/announcement`);
+      if (refreshResponse.ok) {
+        const refreshData = await refreshResponse.json();
+        setAnnouncements(Array.isArray(refreshData) ? refreshData.map(a => ({
+          ...a,
+          date: new Date(a.date),
+          ...(a.lastEdited && { lastEdited: new Date(a.lastEdited) })
+        })) : []);
       }
 
       setIsSuccess(true);
       setTitle('');
       setDescription('');
+      setIsEditing(false);
+      setCurrentId(null);
+      
       setTimeout(() => setIsSuccess(false), 3000);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // ... keep the existing handleEdit, handleDelete, and handleCancel functions ...
+  const handleEdit = (announcement) => {
+    setTitle(announcement.title);
+    setDescription(announcement.description);
+    setCurrentId(announcement._id);
+    setIsEditing(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this announcement?')) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/admin/announcement/${id}`, 
+        { method: 'DELETE' }
+      );
+
+      if (!response.ok) throw new Error('Delete failed');
+      
+      setAnnouncements(prev => prev.filter(item => item._id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setCurrentId(null);
+    setTitle('');
+    setDescription('');
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
     <div className="min-h-screen py-8" style={{ backgroundColor: '#e2ded0' }}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 rounded-md bg-red-100 text-red-700">
+              Error: {error}
+            </div>
+          )}
+
+          {/* Announcement Form */}
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            {/* Form Header */}
             <div className="p-4 text-white font-medium" style={{ backgroundColor: '#647c90' }}>
               <h2 className="text-xl">
                 {isEditing ? 'Edit Announcement' : 'Create New Announcement'}
               </h2>
             </div>
 
-            {/* Form Body */}
             <div className="p-6">
               {isSuccess && (
                 <div className="mb-6 p-4 rounded-md bg-green-100 text-green-700">
@@ -172,7 +242,11 @@ export default function AnnouncementsAdmin() {
             </div>
 
             <div className="p-6">
-              {announcements.length === 0 ? (
+              {isLoading ? (
+                <div className="text-center py-6 text-gray-500">
+                  Loading announcements...
+                </div>
+              ) : announcements.length === 0 ? (
                 <div className="text-center py-6 text-gray-500">
                   No announcements found
                 </div>
@@ -180,7 +254,7 @@ export default function AnnouncementsAdmin() {
                 <ul className="space-y-4">
                   {announcements.map((item) => (
                     <li 
-                      key={item.id}
+                      key={item._id}
                       className="border rounded-md p-4"
                       style={{ borderColor: '#a0bcd1' }}
                     >
@@ -189,8 +263,8 @@ export default function AnnouncementsAdmin() {
                           {item.title}
                         </h3>
                         <span className="text-sm" style={{ color: '#746c70' }}>
-                          {item.date}
-                          {item.lastEdited && ' (edited)'}
+                          {formatDate(item.date)}
+                          {item.lastEdited && ` (edited ${formatDate(item.lastEdited)})`}
                         </span>
                       </div>
                       <p className="mb-4" style={{ color: '#4e4f50' }}>
@@ -208,7 +282,7 @@ export default function AnnouncementsAdmin() {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item._id)}
                           className="text-sm px-3 py-1 rounded-md text-white"
                           style={{ backgroundColor: '#9d4b4b' }}
                         >
