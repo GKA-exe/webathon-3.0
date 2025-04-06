@@ -39,8 +39,8 @@ app.use(cors());
 // Define routes for APIs
 app.use(express.json());
 
+// console.log('request recieved to backend')
 app.use("/qr", express.static("public/qr"));
-
 app.use("/student", studentApp);
 app.use("/admin", adminApp);
 app.use("/leave", leaveApp);
