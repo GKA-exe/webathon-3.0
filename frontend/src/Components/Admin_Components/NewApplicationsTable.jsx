@@ -1,46 +1,35 @@
-import { useState } from "react";
+
+import axios from "axios";
+import { useEffect, useState } from "react";
 import StudentDetailsModal from "./StudentDetailsModal";
 
 export default function NewApplicationsTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [applications, setApplications] = useState([]);
 
-  // Move applications into state
-  const [applications, setApplications] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      studentPhone: "9876543210",
-      parentName: "Robert Doe",
-      parentPhone: "8765432109",
-      email: "john.doe@example.com",
-      dob: "2000-05-15",
-      address: "123 College Road, City",
-      bloodGroup: "O+",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      studentPhone: "9876543211",
-      parentName: "Mary Smith",
-      parentPhone: "8765432108",
-      email: "jane.smith@example.com",
-      dob: "2001-08-22",
-      address: "456 University Avenue, Town",
-      bloodGroup: "A-",
-    },
-    {
-      id: 3,
-      name: "Michael Johnson",
-      studentPhone: "9876543212",
-      parentName: "David Johnson",
-      parentPhone: "8765432107",
-      email: "michael.j@example.com",
-      dob: "2000-12-10",
-      address: "789 Campus Drive, State",
-      bloodGroup: "B+",
-    },
-  ]);
+  // ✅ Fetch from API on mount
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_URL}/student/fetch-allotting-students`
+        );
+        
+        // Filter students to show only those with room status "alloting"
+        const allottingStudents = response.data.filter(student => 
+          student.room === "allotting"
+        );
+        
+        setApplications(allottingStudents);
+        console.log("Fetched alloting students:", allottingStudents);
+      } catch (error) {
+        console.error("Error fetching allotting students:", error);
+      }
+    };
+
+    fetchApplications();
+  }, []);
 
   const handleViewClick = (student) => {
     setSelectedStudent(student);
@@ -48,12 +37,8 @@ export default function NewApplicationsTable() {
   };
 
   const handleApprove = (studentId) => {
-    // Simulate successful API call
     console.log(`Approved student with ID: ${studentId}`);
-
-    // After successful response, remove the approved student from list
-    setApplications((prevApps) => prevApps.filter((student) => student.id !== studentId));
-
+    setApplications((prevApps) => prevApps.filter((student) => student._id !== studentId));
     setIsModalOpen(false);
   };
 
@@ -63,37 +48,25 @@ export default function NewApplicationsTable() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-[#a0bcd1]">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">
-                Student Phone
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">
-                Parent Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">
-                Parent Phone
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">
-                Action
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">Student Phone</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">Parent Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">Parent Phone</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">Room Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#4e4f50] uppercase tracking-wider">Action</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {applications.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#4e4f50]">
-                  {student.name}
-                </td>
+              <tr key={student._id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#4e4f50]">{student.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4e4f50]">{student.contactNumber}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4e4f50]">{student.parentName}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4e4f50]">{student.parentContact}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4e4f50]">
-                  {student.studentPhone}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4e4f50]">
-                  {student.parentName}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4e4f50]">
-                  {student.parentPhone}
+                  <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                    {student.room}
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <button
@@ -107,8 +80,8 @@ export default function NewApplicationsTable() {
             ))}
             {applications.length === 0 && (
               <tr>
-                <td colSpan="5" className="text-center text-gray-500 py-6 text-sm">
-                  No new applications to show.
+                <td colSpan="6" className="text-center text-gray-500 py-6 text-sm">
+                  No new applications with "alloting" status to show.
                 </td>
               </tr>
             )}

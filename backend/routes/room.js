@@ -2,13 +2,14 @@ const express = require("express");
 const expressAsyncHandler = require("express-async-handler");
 const roomRouter = express.Router();
 
+console.log("Room Router entered");
 // POST /add — Add a new room
 roomRouter.post(
   "/add",
   expressAsyncHandler(async (req, res) => {
     const roomCollection = req.app.get("roomCollection");
     const { roomNumber, maxCapacity } = req.body;
-
+    console.log(roomNumber, maxCapacity);
     if (!roomNumber || !maxCapacity) {
       return res
         .status(400)

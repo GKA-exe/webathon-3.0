@@ -24,7 +24,7 @@ export default function StudentDetailsModal({ student, onClose, onApprove, type 
             </div>
             <div>
               <h4 className="text-sm text-gray-500">Student Phone</h4>
-              <p className="font-medium">{student.studentPhone}</p>
+              <p className="font-medium">{student.contactNumber}</p>
             </div>
             <div>
               <h4 className="text-sm text-gray-500">Date of Birth</h4>
@@ -44,7 +44,7 @@ export default function StudentDetailsModal({ student, onClose, onApprove, type 
             </div>
             <div>
               <h4 className="text-sm text-gray-500">Parent Phone</h4>
-              <p className="font-medium">{student.parentPhone}</p>
+              <p className="font-medium">{student.parentContact}</p>
             </div>
 
             {type === "vacate" && (

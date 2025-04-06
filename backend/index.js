@@ -42,7 +42,6 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "../frontend/out")));
 app.use("/qr", express.static("public/qr"));
-
 app.use("/student", studentApp);
 app.use("/admin", adminApp);
 app.use("/leave", leaveApp);

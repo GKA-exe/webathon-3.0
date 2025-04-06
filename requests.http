@@ -6,3 +6,15 @@ Content-Type: application/json
     "email" : "krishna.gunturi03@gmail.com",
     "password" : "12345678"
 }
+###
+POST http://localhost:5000/room/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "roomNumber": 103,
+    "maxCapacity": 3,
+    "currentCapacity": 0
+}
+
+###
+GET http://localhost:5000/student/fetch-allotting-students HTTP/1.1
