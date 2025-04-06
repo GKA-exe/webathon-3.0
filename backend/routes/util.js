@@ -42,6 +42,7 @@ const createStudentorAdmin = async (req, res) => {
   }
 
   user.password = await bcryptjs.hash(user.password, 7);
+  user.isFirstLogin = true;
 
   if (user.userType === "student") {
     // QR Code generation
