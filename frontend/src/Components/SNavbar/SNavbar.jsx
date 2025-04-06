@@ -13,6 +13,14 @@ const SNavbar = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
+  function logout() {
+    // Remove JWT token from sessionStorage
+    sessionStorage.removeItem("jwtToken");
+
+    // Optionally, redirect the user to login page or home
+    window.location.href = "/login"; // change path as needed
+  }
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     // Close profile dropdown when toggling mobile menu
@@ -123,7 +131,7 @@ const SNavbar = () => {
                     Apply Leave
                   </a>
                   <a
-                    href="/student/logout"
+                    onClick={logout}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Logout
@@ -176,7 +184,7 @@ const SNavbar = () => {
                   <MobileNavItem label="Notifications" href="/student/notifications" />
                   <MobileNavItem label="Profile" href="/student/profile" />
                   <MobileNavItem label="Apply Leave" href="/student/leave" />
-                  <MobileNavItem label="Logout" href="/student/logout" />
+                  <MobileNavItem label="Logout" onClick={logout} />
                 </div>
               )}
             </div>
