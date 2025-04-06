@@ -22,16 +22,13 @@ studentApp.put(
   expressAsyncHandler(async (req, res) => {
     const studentsCollection = req.app.get("studentsCollection");
     const student = req.body;
-    const result = await studentsCollection.updateOne(
-      { email: student.email },
-      { $set: student },
-    );
+    const result = await studentsCollection.updateOne({ email: student.email }, { $set: student });
     if (result.modifiedCount === 1) {
       res.send({ message: "Student updated successfully" });
     } else {
       res.send({ message: "Failed to update student" });
     }
-  }),
+  })
 );
 
 // Fetch a student by email
@@ -46,7 +43,7 @@ studentApp.get(
     } else {
       res.send({ message: "Student not found" });
     }
-  }),
+  })
 );
 
 // Fetch is a student is in Hostel or not
@@ -61,7 +58,23 @@ studentApp.get(
     } else {
       res.send({ inHostel: true });
     }
-  }),
+  })
+);
+
+//Fetch all students whoose "room" is "alloting"
+studentApp.get(
+  "/fetch-allotting-students",
+  expressAsyncHandler(async (req, res) => {
+    const studentsCollection = req.app.get("studentsCollection");
+
+    const students = await studentsCollection.find({ room: "allotting" }).toArray();
+
+    if (students.length > 0) {
+      res.send(students);
+    } else {
+      res.send({ message: "No students found with room set to 'allotting'" });
+    }
+  })
 );
 
 // Delete Student
@@ -76,7 +89,7 @@ studentApp.post(
     } else {
       res.send({ message: "Student not found" });
     }
-  }),
+  })
 );
 
 // Attendance -> Mark Entry
@@ -87,14 +100,14 @@ studentApp.post(
     const attendance = req.body;
     const result = await studentsCollection.updateOne(
       { email: attendance.email },
-      { $set: { attendance: "true" } },
+      { $set: { attendance: "true" } }
     );
     if (result.modifiedCount === 1) {
       res.send({ message: "Entrance marked successfully" });
     } else {
       res.send({ message: "Failed to mark attendance" });
     }
-  }),
+  })
 );
 
 // Attendance -> Mark Exit
@@ -105,14 +118,14 @@ studentApp.post(
     const attendance = req.body;
     const result = await studentsCollection.updateOne(
       { email: attendance.email },
-      { $set: { attendance: "false" } },
+      { $set: { attendance: "false" } }
     );
     if (result.modifiedCount === 1) {
       res.send({ message: "Exit marked successfully" });
     } else {
       res.send({ message: "Failed to mark exit" });
     }
-  }),
+  })
 );
 
 studentApp.post(
@@ -131,13 +144,13 @@ studentApp.post(
       student.feeDue = (student.feeDue || 5000) - base_amount / 100;
       const result = await studentsCollection.updateOne(
         { email: email },
-        { $set: { feeDue: student.feeDue } },
+        { $set: { feeDue: student.feeDue } }
       );
       console.log(result);
     }
 
     res.send({ status: "ok" });
-  }),
+  })
 );
 
 // Fetch All Announcements
@@ -147,7 +160,7 @@ studentApp.get(
     const announcementCollection = req.app.get("announcementCollection");
     const announcements = await announcementCollection.find({}).toArray();
     res.send(announcements);
-  }),
+  })
 );
 
 module.exports = studentApp;

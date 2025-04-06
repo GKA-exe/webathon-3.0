@@ -1,12 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  animate,
-} from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, animate } from "framer-motion";
 import { Menu, X, User, Lock, Shield } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,23 +27,45 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setIsLoading(true);
 
-    const userData = { email, password, userType };
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_URL}/student/login`,
-      userData,
-    );
+    try {
+      const userData = { email, password, userType };
 
-    if (response.data.message === "login success") {
-      const userData = { ...response.data.user, token: response.data.token };
-      delete userData._id;
-      localStorage.setItem("user", JSON.stringify(userData));
+      if (userType === "student") {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/student/login`, userData);
+        if (response.data.message === "login success") {
+          const userData = { ...response.data.user, token: response.data.token };
+          delete userData._id;
+          localStorage.setItem("user", JSON.stringify(userData));
+          router.push("/student/dashboard");
+        }
+      } else if (userType === "admin") {
+        // Check hardcoded admin credentials first
+        if (email === "admin@narkam.com" && password === "admin123") {
+          // Make the API call
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/admin/login`, userData);
+          // Store admin info and token in sessionStorage instead of localStorage for better security
+          sessionStorage.setItem(
+            "admin",
+            JSON.stringify({
+              email,
+              userType,
+              token: response.data.token, // Save the JWT token from the response
+            })
+          );
+          router.push("/admin");
+        } else {
+          // Handle invalid admin credentials
+          alert("Invalid admin credentials");
+        }
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
     }
-
-    router.push("/student/dashboard");
-    setIsLoading(false);
   };
 
   const handleMouseMove = (e) => {
@@ -150,12 +167,10 @@ export default function Login() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#a0bcd1]/10 rounded-full -mt-20 -mr-32 blur-2xl"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#4e4f50]/10 rounded-full -mb-10 -ml-20 blur-xl"></div>
 
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Welcome Back!
-              </h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">Welcome Back!</h1>
               <p className="text-xl mb-8 text-[#e2ded0]/90">
-                Continue your learning journey with NARKAM. Access your courses,
-                track your progress, and connect with fellow students.
+                Continue your learning journey with NARKAM. Access your courses, track your
+                progress, and connect with fellow students.
               </p>
 
               <div className="space-y-6">
@@ -174,9 +189,7 @@ export default function Login() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium">
-                      Personalized Learning
-                    </h3>
+                    <h3 className="text-lg font-medium">Personalized Learning</h3>
                     <p className="text-[#e2ded0]/80">
                       Tailored courses designed for your individual needs
                     </p>
@@ -231,8 +244,8 @@ export default function Login() {
               <div className="mt-12 hidden md:block">
                 <div className="p-6 bg-[#4e4f50]/10 rounded-xl border border-[#e2ded0]/20 shadow-inner">
                   <p className="text-[#e2ded0]/90 italic">
-                    "NARKAM has transformed how I approach learning. The
-                    platform is intuitive and the resources are exceptional."
+                    "NARKAM has transformed how I approach learning. The platform is intuitive and
+                    the resources are exceptional."
                   </p>
                   <p className="mt-2 font-medium">— Alex D., Student</p>
                 </div>
@@ -278,10 +291,7 @@ export default function Login() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-8"
             >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="mb-6 inline-block"
-              >
+              <motion.div whileHover={{ scale: 1.05 }} className="mb-6 inline-block">
                 <div className="p-4 rounded-2xl bg-[#647c90]/10 border border-[#647c90]/30 hover:border-[#4e4f50]/50 transition-colors duration-300 shadow-md">
                   {userType === "student" ? (
                     <User className="w-10 h-10 text-[#4e4f50]" />
@@ -293,9 +303,7 @@ export default function Login() {
               <h1 className="text-3xl font-bold text-[#4e4f50] mb-2">
                 {userType === "student" ? "Student Login" : "Admin Portal"}
               </h1>
-              <p className="text-[#4e4f50]/80">
-                Enter your credentials to continue
-              </p>
+              <p className="text-[#4e4f50]/80">Enter your credentials to continue</p>
             </motion.div>
 
             <motion.div
@@ -336,10 +344,7 @@ export default function Login() {
               transition={{ delay: 0.2 }}
             >
               <motion.div className="space-y-1">
-                <label
-                  htmlFor="email"
-                  className="text-sm font-medium text-[#4e4f50]/80"
-                >
+                <label htmlFor="email" className="text-sm font-medium text-[#4e4f50]/80">
                   Email Address
                 </label>
                 <div className="relative">
@@ -371,10 +376,7 @@ export default function Login() {
               </motion.div>
 
               <motion.div className="space-y-1">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium text-[#4e4f50]/80"
-                >
+                <label htmlFor="password" className="text-sm font-medium text-[#4e4f50]/80">
                   Password
                 </label>
                 <div className="relative">
@@ -400,13 +402,11 @@ export default function Login() {
                 >
                   <div className="flex items-center mb-1">
                     <Shield className="w-4 h-4 text-[#4e4f50] mr-2" />
-                    <span className="text-sm font-medium text-[#746c70]">
-                      Admin Notice
-                    </span>
+                    <span className="text-sm font-medium text-[#746c70]">Admin Notice</span>
                   </div>
                   <p className="text-xs text-[#4e4f50]/70">
-                    Admin accounts have elevated privileges. Ensure you're
-                    authorized to access this portal.
+                    Admin accounts have elevated privileges. Ensure you're authorized to access this
+                    portal.
                   </p>
                 </motion.div>
               )}
@@ -484,9 +484,7 @@ export default function Login() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <p className="text-[#e2ded0]/90">
-                © 2025 NARKAM. All rights reserved.
-              </p>
+              <p className="text-[#e2ded0]/90">© 2025 NARKAM. All rights reserved.</p>
             </div>
             <div className="flex space-x-6">
               <Link
