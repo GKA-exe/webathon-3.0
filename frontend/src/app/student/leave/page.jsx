@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from 'react';
-import { Home, Calendar, User, Phone, AlertCircle, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Home, Calendar, User, Phone, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import axios from 'axios';
 
 const LeaveApplicationSystem = () => {
   const [activePanel, setActivePanel] = useState('form');
@@ -10,18 +11,65 @@ const LeaveApplicationSystem = () => {
     reason: '',
     startDate: '',
     returnDate: '',
-    parentPhoneNumber: ''
+    parentPhoneNumber: '',
+    email: '',
+    status: 'pending'
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const API_URL = process.env.NEXT_PUBLIC_URL;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setActivePanel('pass');
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await axios.post(`${API_URL}/leave/apply`, formData);
+      
+      if (response.data.message === "Leave request submitted successfully") {
+        setSuccessMessage('Leave application submitted successfully!');
+        setActivePanel('pass');
+      } else {
+        setError('Failed to submit application. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again later.');
+      console.error('Leave submission error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Function to check leave status (can be used to refresh the leave pass)
+  const checkLeaveStatus = async () => {
+    if (!formData.email) return;
+    
+    try {
+      const response = await axios.get(`${API_URL}/leave/approved`);
+      const userLeave = response.data.find(leave => leave.email === formData.email);
+      
+      if (userLeave) {
+        setFormData({...formData, status: userLeave.status});
+      }
+    } catch (err) {
+      console.error('Error checking leave status:', err);
+    }
+  };
+
+  // Optional: Check status when switching to pass panel
+  useEffect(() => {
+    if (activePanel === 'pass' && formData.email) {
+      checkLeaveStatus();
+    }
+  }, [activePanel]);
 
   return (
     <div className="min-h-screen w-full bg-background">
@@ -70,6 +118,18 @@ const LeaveApplicationSystem = () => {
               Leave Application Form
             </h2>
             
+            {error && (
+              <div className="bg-red-50 p-3 rounded mb-4 text-red-700 border border-red-200">
+                {error}
+              </div>
+            )}
+            
+            {successMessage && (
+              <div className="bg-green-50 p-3 rounded mb-4 text-green-700 border border-green-200">
+                {successMessage}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 {/* Name Field */}
@@ -81,6 +141,21 @@ const LeaveApplicationSystem = () => {
                     type="text"
                     name="name"
                     value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    required
+                  />
+                </div>
+
+                {/* Email Field */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <User size={16} className="text-gray-600" /> Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
                     className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                     required
@@ -166,8 +241,9 @@ const LeaveApplicationSystem = () => {
               <button
                 type="submit"
                 className="w-full py-3 px-6 bg-primary text-white rounded-lg font-semibold hover:bg-teritary transition-colors"
+                disabled={loading}
               >
-                Submit Application
+                {loading ? 'Submitting...' : 'Submit Application'}
               </button>
             </form>
           </div>
@@ -177,16 +253,37 @@ const LeaveApplicationSystem = () => {
         {activePanel === 'pass' && (
           <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-800">
-              <CheckCircle size={20} className="text-green-600" />
+              {formData.status === 'approved' ? (
+                <CheckCircle size={20} className="text-green-600" />
+              ) : (
+                <Clock size={20} className="text-yellow-600" />
+              )}
               Leave Pass
             </h2>
 
             <div className="space-y-6">
-              {/* Approval Header */}
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <div className="flex items-center gap-2 text-green-700">
-                  <CheckCircle size={20} />
-                  <span className="font-semibold">Leave Approved</span>
+              {/* Status Header */}
+              <div className={`p-4 rounded-lg border ${
+                formData.status === 'approved' 
+                  ? 'bg-green-50 border-green-200' 
+                  : 'bg-yellow-50 border-yellow-200'
+              }`}>
+                <div className={`flex items-center gap-2 ${
+                  formData.status === 'approved' 
+                    ? 'text-green-700' 
+                    : 'text-yellow-700'
+                }`}>
+                  {formData.status === 'approved' ? (
+                    <>
+                      <CheckCircle size={20} />
+                      <span className="font-semibold">Leave Approved</span>
+                    </>
+                  ) : (
+                    <>
+                      <Clock size={20} />
+                      <span className="font-semibold">Leave Pending Approval</span>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -215,19 +312,31 @@ const LeaveApplicationSystem = () => {
                   <p className="font-medium text-gray-800">{formData.parentPhoneNumber}</p>
                 </div>
 
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-600">Approved By</p>
-                  <p className="font-medium text-gray-800">Hostel Administration</p>
-                </div>
+                {formData.status === 'approved' && (
+                  <div className="space-y-1">
+                    <p className="text-sm text-gray-600">Approved By</p>
+                    <p className="font-medium text-gray-800">Hostel Administration</p>
+                  </div>
+                )}
               </div>
 
               {/* Verification Note */}
               <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <p className="text-sm text-gray-600">
-                  Present this pass when leaving and returning to the hostel.
-                  Keep your parent's contact number accessible for verification.
+                  {formData.status === 'approved' 
+                    ? "Present this pass when leaving and returning to the hostel. Keep your parent's contact number accessible for verification."
+                    : "Your leave application is pending approval. You will be notified once it's approved."
+                  }
                 </p>
               </div>
+
+              {/* Refresh Status Button */}
+              <button
+                onClick={checkLeaveStatus}
+                className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors border border-gray-300"
+              >
+                Refresh Status
+              </button>
             </div>
           </div>
         )}

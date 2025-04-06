@@ -1,11 +1,53 @@
 // LostAndFoundForm.jsx
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+
+// API service for lost and found items
+const lostAndFoundService = {
+  registerItem: async (itemData) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/lostandfound/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(itemData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to register item');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error registering item:', error);
+      throw error;
+    }
+  },
+  
+  getAllItems: async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/lostandfound/`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch items');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching items:', error);
+      throw error;
+    }
+  }
+};
 
 const LostAndFoundForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState(null);
+  const [items, setItems] = useState([]);
+  const [showItems, setShowItems] = useState(false);
 
   const {
     register,
@@ -14,24 +56,52 @@ const LostAndFoundForm = () => {
     formState: { errors }
   } = useForm();
 
+  // Fetch all lost and found items when "View Items" is clicked
+  const fetchItems = async () => {
+    try {
+      const data = await lostAndFoundService.getAllItems();
+      setItems(data);
+    } catch (error) {
+      setError('Failed to load lost and found items');
+    }
+  };
+
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+    setError(null);
 
     try {
-      console.log('Submitting Lost and Found item:', data);
+      const result = await lostAndFoundService.registerItem(data);
+      
+      if (result.message === "Lost and Found posted successfully") {
+        setIsSuccess(true);
+        reset();
+        
+        // If items are being shown, refresh the list
+        if (showItems) {
+          fetchItems();
+        }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setIsSuccess(true);
-      reset();
-
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 3000);
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 3000);
+      } else {
+        setError('Failed to register item');
+      }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      setError('Error submitting form: ' + error.message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Toggle items list and fetch data if needed
+  const toggleItemsList = () => {
+    const newShowItems = !showItems;
+    setShowItems(newShowItems);
+    
+    if (newShowItems && items.length === 0) {
+      fetchItems();
     }
   };
 
@@ -48,6 +118,12 @@ const LostAndFoundForm = () => {
               {isSuccess && (
                 <div className="mb-6 p-4 rounded-md bg-green-100 text-green-700">
                   Lost and found item registered successfully!
+                </div>
+              )}
+              
+              {error && (
+                <div className="mb-6 p-4 rounded-md bg-red-100 text-red-700">
+                  {error}
                 </div>
               )}
 
@@ -163,7 +239,16 @@ const LostAndFoundForm = () => {
                     ></textarea>
                   </div>
 
-                  <div className="flex justify-end">
+                  <div className="flex justify-between">
+                    <button 
+                      type="button"
+                      onClick={toggleItemsList}
+                      className="px-4 py-2 font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      style={{ backgroundColor: '#a0bcd1' }}
+                    >
+                      {showItems ? 'Hide Items' : 'View Items'}
+                    </button>
+                    
                     <button
                       type="submit"
                       disabled={isSubmitting}
@@ -178,6 +263,35 @@ const LostAndFoundForm = () => {
                   </div>
                 </div>
               </form>
+              
+              {showItems && (
+                <div className="mt-8 border-t pt-6">
+                  <h3 className="text-lg font-medium mb-4" style={{ color: '#4e4f50' }}>
+                    Lost and Found Items
+                  </h3>
+                  
+                  {items.length === 0 ? (
+                    <p className="text-gray-500">No items found.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {items.map((item, index) => (
+                        <div key={index} className="p-4 border rounded-md" style={{ borderColor: '#a0bcd1' }}>
+                          <h4 className="font-medium" style={{ color: '#4e4f50' }}>{item.title}</h4>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Location:</span> {item.foundLocation}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Date Found:</span> {new Date(item.foundDate).toLocaleDateString()}
+                          </p>
+                          {item.description && (
+                            <p className="text-sm text-gray-600 mt-2">{item.description}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
