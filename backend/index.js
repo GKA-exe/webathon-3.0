@@ -34,11 +34,13 @@ const adminApp = require("./routes/admin");
 const leaveApp = require("./routes/leave");
 const problemApp = require("./routes/problems");
 const roomApp = require("./routes/room");
+const path = require("node:path");
 
 app.use(cors());
 // Define routes for APIs
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, "../frontend/out")));
 app.use("/qr", express.static("public/qr"));
 
 app.use("/student", studentApp);
