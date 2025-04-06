@@ -15,6 +15,7 @@ import {
 export default function ComplaintForm() {
   const [formData, setFormData] = useState({
     name: '',
+    email: '', // Added email field which is required by your API
     roomNumber: '',
     title: '',
     category: '',
@@ -25,6 +26,7 @@ export default function ComplaintForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
+  const [submissionError, setSubmissionError] = useState('');
 
   const categories = ['Mess', 'Room', 'Wi-Fi', 'Water', 'Electricity', 'Maintenance', 'Security', 'Other'];
 
@@ -42,6 +44,13 @@ export default function ComplaintForm() {
       switch (field) {
         case 'name':
           newErrors.name = !formData.name.trim() ? 'Name is required' : '';
+          break;
+        case 'email':
+          newErrors.email = !formData.email.trim() 
+            ? 'Email is required' 
+            : !/^\S+@\S+\.\S+$/.test(formData.email)
+              ? 'Enter a valid email address'
+              : '';
           break;
         case 'roomNumber':
           newErrors.roomNumber = !formData.roomNumber.trim() 
@@ -84,7 +93,7 @@ export default function ComplaintForm() {
   };
 
   const validateForm = () => {
-    const allFields = ['name', 'roomNumber', 'title', 'category', 'description'];
+    const allFields = ['name', 'email', 'roomNumber', 'title', 'category', 'description'];
     if (formData.category === 'Other') allFields.push('customCategory');
     
     return validateFields(allFields);
@@ -94,7 +103,7 @@ export default function ComplaintForm() {
     e.preventDefault();
     
     // Mark all fields as touched to show any errors
-    const allFields = ['name', 'roomNumber', 'title', 'category', 'description', 'customCategory'];
+    const allFields = ['name', 'email', 'roomNumber', 'title', 'category', 'description', 'customCategory'];
     const newTouchedFields = {};
     allFields.forEach(field => newTouchedFields[field] = true);
     setTouchedFields(newTouchedFields);
@@ -102,24 +111,45 @@ export default function ComplaintForm() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setSubmissionError('');
     
     // Prepare submission data
+    const finalCategory = formData.category === 'Other' ? formData.customCategory : formData.category;
+    
     const submissionData = {
-      ...formData,
-      timestamp: new Date().toISOString(),
-      category: formData.category === 'Other' ? formData.customCategory : formData.category,
+      email: formData.email,
+      tag: finalCategory,  // API expects 'tag' instead of 'category'
+      description: `${formData.title}: ${formData.description}`, // Combining title and description
+      roomNumber: formData.roomNumber,
+      // Include name in description since API doesn't have name field
+      name: formData.name
     };
     
-    // Simulate API call
+    // Make actual API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Submission Data:', submissionData);
+      const apiUrl = `${process.env.NEXT_PUBLIC_URL}/problem/`;
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit complaint');
+      }
+      
+      console.log('Submission successful:', data);
       
       // Reset form
       setIsSubmitting(false);
       setShowSuccess(true);
       setFormData({
         name: '',
+        email: '',
         roomNumber: '',
         title: '',
         category: '',
@@ -132,6 +162,7 @@ export default function ComplaintForm() {
     } catch (error) {
       console.error('Error submitting form:', error);
       setIsSubmitting(false);
+      setSubmissionError(error.message || 'Failed to submit complaint. Please try again.');
     }
   };
 
@@ -159,9 +190,10 @@ export default function ComplaintForm() {
   // Get current step progress
   const getProgress = () => {
     let filledFields = 0;
-    let totalFields = 5; // name, room, title, category, description
+    let totalFields = 6; // name, email, room, title, category, description
     
     if (formData.name) filledFields++;
+    if (formData.email) filledFields++;
     if (formData.roomNumber) filledFields++;
     if (formData.title) filledFields++;
     if (formData.category) filledFields++;
@@ -282,6 +314,39 @@ export default function ComplaintForm() {
                       </div>
                     )}
                   </div>
+                </div>
+              </div>
+              
+              {/* Email Input */}
+              <div className="relative mt-8">
+                <label className="block text-sm font-medium mb-2 flex items-center" style={{ color: 'var(--color-teritary)' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Email *
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Your email address"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.email && touchedFields.email ? 'border-red-500' : 'border-transparent'
+                    } focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] transition-all duration-200`}
+                    style={{ 
+                      color: 'var(--color-foreground)',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                    }}
+                  />
+                  {errors.email && touchedFields.email && (
+                    <div className="absolute -bottom-5 left-0 text-red-500 text-xs flex items-center">
+                      <ExclamationCircleIcon className="h-3 w-3 mr-1" />
+                      {errors.email}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -427,6 +492,16 @@ export default function ComplaintForm() {
                   * Required fields
                 </div>
               </div>
+
+              {/* Display API error if any */}
+              {submissionError && (
+                <div className="bg-red-50 p-4 rounded-lg border border-red-100">
+                  <p className="text-red-600 text-sm flex items-center">
+                    <ExclamationCircleIcon className="h-4 w-4 mr-2" />
+                    {submissionError}
+                  </p>
+                </div>
+              )}
 
               {/* Submit Button */}
               <div className="pt-4">
