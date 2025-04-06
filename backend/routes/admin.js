@@ -26,4 +26,31 @@ adminApp.post(
   }),
 );
 
+adminApp.get(
+  "/announcement",
+  expressAsyncHandler(async (req, res) => {
+    const announcementCollection = req.app.get("announcementCollection");
+    const announcements = await announcementCollection.find({}).toArray();
+    if (announcements) {
+      res.send(announcements);
+    } else {
+      res.send({ message: "No announcements found" });
+    }
+  }),
+);
+
+adminApp.delete(
+  "/announcement/:id",
+  expressAsyncHandler(async (req, res) => {
+    const announcementCollection = req.app.get("announcementCollection");
+    const id = req.params.id;
+    const result = await announcementCollection.deleteOne({ _id: id });
+    if (result.deletedCount === 1) {
+      res.send({ message: "Announcement deleted successfully" });
+    } else {
+      res.send({ message: "Announcement not found" });
+    }
+  })
+);
+
 module.exports = adminApp;
