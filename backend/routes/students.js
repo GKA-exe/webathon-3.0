@@ -17,7 +17,7 @@ studentApp.post("/create", expressAsyncHandler(createStudentorAdmin));
 studentApp.post("/login", expressAsyncHandler(studentOrAdminLogin));
 
 // Student Update
-studentApp.post(
+studentApp.put(
   "/update",
   expressAsyncHandler(async (req, res) => {
     const studentsCollection = req.app.get("studentsCollection");
