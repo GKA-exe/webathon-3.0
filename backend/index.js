@@ -16,12 +16,14 @@ mongoClient
     const problemCollection = dbObj.collection("problem");
     const roomCollection = dbObj.collection("rooms");
     const announcementCollection = dbObj.collection("announcements");
+    const lostandfoundCollection = dbObj.collection("lostandfound");
     app.set("studentsCollection", studentsCollection);
     app.set("adminCollection", adminCollection);
     app.set("leaveCollection", leaveCollection);
     app.set("problemCollection", problemCollection);
     app.set("roomCollection", roomCollection);
     app.set("announcementCollection", announcementCollection);
+    app.set("lostandfoundCollection", lostandfoundCollection);
     console.log("Database connection established");
   })
   .catch((err) => {
@@ -34,6 +36,7 @@ const adminApp = require("./routes/admin");
 const leaveApp = require("./routes/leave");
 const problemApp = require("./routes/problems");
 const roomApp = require("./routes/room");
+const lostandfoundApp = require("./routes/lostandfound");
 const path = require("node:path");
 
 app.use(cors());
@@ -47,6 +50,7 @@ app.use("/admin", adminApp);
 app.use("/leave", leaveApp);
 app.use("/problem", problemApp);
 app.use("/room", roomApp);
+app.use("/lostandfound", lostandfoundApp);
 
 app.get("/status", (req, res) => {
   res.send({ message: "The server is up", status: "Live" });
