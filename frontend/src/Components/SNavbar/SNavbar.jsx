@@ -26,7 +26,7 @@ const SNavbar = () => {
       <div className="container mx-auto">
         {/* Desktop and Mobile Header */}
         <div className="flex justify-between items-center">
-          <div className="text-xl font-bold">Student Portal</div>
+          <div className="text-xl font-bold">NARKAM Student Portal</div>
 
           {/* Mobile menu button */}
           <button

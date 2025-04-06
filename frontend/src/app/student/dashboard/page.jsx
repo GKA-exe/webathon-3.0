@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -15,27 +15,19 @@ import {
   LogOut,
 } from "lucide-react";
 
+
 const StudentDashboard = ({ studentData }) => {
-  const [student, setStudent] = useState(
-    studentData || {
-      id: "12345",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      isFirstLogin: false,
-      roomAllocated: "B-205",
-      payment: {
-        status: "due",
-        amount: 5000,
-        dueDate: "April 15, 2025",
-        lastPaid: "January 15, 2025",
-      },
-    }
-  );
+  const [student, setStudent] = useState({});
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showVacateModal, setShowVacateModal] = useState(false);
+
+  // Persist student data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("student", JSON.stringify(student));
+  }, [student]);
 
   const handleRequestRoom = () => {
     router.push("/student/room-request");
@@ -104,6 +96,11 @@ const StudentDashboard = ({ studentData }) => {
       date: "April 3, 2025",
     },
   ];
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    setStudent(JSON.parse(user));
+  }, [])
 
   return (
     <div className="min-h-screen p-4 md:p-6" style={{ backgroundColor: "#e2ded0" }}>
