@@ -73,7 +73,7 @@ const SNavbar = () => {
                 className="flex items-center space-x-1 hover:text-gray-300"
                 onClick={toggleProfileDropdown}
               >
-                <span>Profile ({studentName})</span>
+                <span>Profile</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4"

@@ -9,38 +9,12 @@ const StudentProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dummy student data - replace with actual API call when needed
-  const dummyProfile = {
-    id: "STU-2024-001",
-    name: "John Doe",
-    room: "B201",
-    contact: "+1 (555) 123-4567",
-    email: "john.doe@university.edu",
-    // Add other fields as needed
-  };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setLoading(true);
-        // Commented out actual API call
-        // const response = await axios.get("/api/student/profile");
-        // setProfile(response.data);
-        
-        // Using dummy data instead
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading delay
-        setProfile(dummyProfile);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError("Failed to load your profile. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+    const user = localStorage.getItem("user");
+    setProfile(JSON.parse(user));
+    setLoading(false);
+  }, [])
 
   const ProfileField = ({ icon, label, value, className = "" }) => {
     const Icon = icon;
@@ -120,7 +94,7 @@ const StudentProfile = () => {
               <ProfileField 
                 icon={Phone} 
                 label="Contact Number" 
-                value={profile.contact} 
+                value={profile.contactNumber} 
               />
               <ProfileField 
                 icon={Mail} 

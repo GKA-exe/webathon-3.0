@@ -4,55 +4,62 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const StudentQRCode = () => {
-  const [qrUrl, setQrUrl] = useState(null);
+  // const [qrUrl, setQrUrl] = useState(null);
+  const [student, setStudent] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [downloadStatus, setDownloadStatus] = useState("");
 
   useEffect(() => {
-    setIsLoading(true);
-    axios.get("/api/qr/:userId")
-      .then(res => {
-        setQrUrl(res.data.qr);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch QR code:", err);
-        setError("Could not load your QR code. Please try again later.");
-        setIsLoading(false);
-      });
-  }, []);
+    const user = localStorage.getItem("user");
+    setStudent(JSON.parse(user));
+    setIsLoading(false);
+  }, [])
+  
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   axios.get("/api/qr/:userId")
+  //     .then(res => {
+  //       setQrUrl(res.data.qr);
+  //       setIsLoading(false);
+  //     })
+  //     .catch(err => {
+  //       console.error("Failed to fetch QR code:", err);
+  //       setError("Could not load your QR code. Please try again later.");
+  //       setIsLoading(false);
+  //     });
+  // }, []);
 
-  const downloadQR = () => {
-    if (!qrUrl) return;
+  // const downloadQR = () => {
+  //   if (!qrUrl) return;
     
-    setDownloadStatus("Downloading...");
+  //   setDownloadStatus("Downloading...");
     
-    const link = document.createElement("a");
-    link.href = qrUrl;
-    link.download = "my-qr-code.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  //   const link = document.createElement("a");
+  //   link.href = qrUrl;
+  //   link.download = "my-qr-code.png";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
     
-    setDownloadStatus("Downloaded!");
-    setTimeout(() => setDownloadStatus(""), 2000);
-  };
+  //   setDownloadStatus("Downloaded!");
+  //   setTimeout(() => setDownloadStatus(""), 2000);
+  // };
 
-  const reloadQR = () => {
-    setIsLoading(true);
-    setError(null);
-    axios.get("/api/qr/:userId")
-      .then(res => {
-        setQrUrl(res.data.qr);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch QR code:", err);
-        setError("Could not load your QR code. Please try again later.");
-        setIsLoading(false);
-      });
-  };
+  // const reloadQR = () => {
+  //   setIsLoading(true);
+  //   setError(null);
+  //   axios.get("/api/qr/:userId")
+  //     .then(res => {
+  //       setQrUrl(res.data.qr);
+  //       setIsLoading(false);
+  //     })
+  //     .catch(err => {
+  //       console.error("Failed to fetch QR code:", err);
+  //       setError("Could not load your QR code. Please try again later.");
+  //       setIsLoading(false);
+  //     });
+  // };
 
   return (
     <div 
@@ -100,32 +107,11 @@ const StudentQRCode = () => {
                 style={{ backgroundColor: "var(--color-textc)" }}
               >
                 <img
-                  src={qrUrl}
+                  src={`${process.env.NEXT_PUBLIC_URL}${student.qrCodePath}`}
                   alt="Student QR Code"
                   className="w-48 h-48 object-contain"
                 />
               </div>
-
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full">
-                <button
-                  onClick={downloadQR}
-                  className="px-4 py-2 rounded-md text-white font-medium flex-1"
-                  style={{ backgroundColor: "var(--color-primary)" }}
-                >
-                  {downloadStatus || "Download QR Code"}
-                </button>
-                <button
-                  onClick={reloadQR}
-                  className="px-4 py-2 rounded-md font-medium flex-1"
-                  style={{ 
-                    backgroundColor: "var(--color-secondary)",
-                    color: "var(--color-foreground)"
-                  }}
-                >
-                  Refresh
-                </button>
-              </div>
-
               <p 
                 className="mt-6 text-sm text-center"
                 style={{ color: "var(--color-teritary)" }}
